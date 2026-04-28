@@ -1,0 +1,30 @@
+SERVO PROJECT GENERAL REQUIREMENTS
+
+HARDWARE TEST
+    MAGNETIC ENCODER
+    THERMISTOR
+    COMMUNICATION CAN HUB
+
+SOFTWARE CONTROL
+    COMMUNICATION INTERFACE
+        CAN HUB
+        SPI
+        UART
+        I2C (probably not used)
+    CONTROL SYSTEM
+        CLASS & STRUCTS
+            ENCODER
+            CONTROLLER
+            AXIS
+            TASK PRIORITY
+        OPERATING MODE
+            POSITION CONTROL
+            VELOCITY CONTROL
+            TORQUE CONTROL
+            TRAJECTORY PLANNING
+        STATE MACHINE
+            CALIBRATION
+            ERROR
+            DEBUG
+
+
