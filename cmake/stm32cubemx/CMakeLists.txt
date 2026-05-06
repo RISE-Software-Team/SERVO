@@ -19,6 +19,7 @@ set(MX_Include_Dirs
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Inc
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Device/ST/STM32L5xx/Include
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Drivers/CMSIS/Include
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Firmware/Inc
 )
 
 # STM32CubeMX generated application sources
@@ -79,6 +80,11 @@ set(USB_Device_Library_Src
     ${CMAKE_CURRENT_SOURCE_DIR}/../../Middlewares/ST/STM32_USB_Device_Library/Class/CDC/Src/usbd_cdc.c
 )
 
+# Firmware libraries
+set(Firmware_Library_Src
+    ${CMAKE_CURRENT_SOURCE_DIR}/../../Firmware/Src/utilities.cpp
+)
+
 # Link directories setup
 set(MX_LINK_DIRS
 
@@ -87,8 +93,10 @@ set(MX_LINK_DIRS
 set(MX_LINK_LIBS 
     STM32_Drivers
     ${TOOLCHAIN_LINK_LIBRARIES}
-    USB_Device_Library	
+    USB_Device_Library
+    Firmware_Library
 )
+
 # Interface library for includes and symbols
 add_library(stm32cubemx INTERFACE)
 target_include_directories(stm32cubemx INTERFACE ${MX_Include_Dirs})
@@ -99,11 +107,15 @@ add_library(STM32_Drivers OBJECT)
 target_sources(STM32_Drivers PRIVATE ${STM32_Drivers_Src})
 target_link_libraries(STM32_Drivers PUBLIC stm32cubemx)
 
-
 # Create USB_Device_Library static library
 add_library(USB_Device_Library OBJECT)
 target_sources(USB_Device_Library PRIVATE ${USB_Device_Library_Src})
 target_link_libraries(USB_Device_Library PUBLIC stm32cubemx)
+
+# Create Firmware_library static library
+add_library(Firmware_Library OBJECT)
+target_sources(Firmware_Library PRIVATE ${Firmware_Library_Src})
+target_link_libraries(Firmware_Library PUBLIC stm32cubemx)
 
 # Add STM32CubeMX generated application sources to the project
 target_sources(${CMAKE_PROJECT_NAME} PRIVATE ${MX_Application_Src})

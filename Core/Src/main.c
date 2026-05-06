@@ -17,12 +17,16 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#define USE_FULL_ASSERT // Enable the assert_param macro in the HAL drivers for debugging purposes
+
 #include "main.h"
+#include "stm32l5xx_hal.h"
 #include "usb_device.h"
+#include "usbd_cdc_if.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "utilities.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -32,7 +36,7 @@
 
 /* Private define ------------------------------------------------------------*/
 /* USER CODE BEGIN PD */
-
+#define TAG "MAIN"
 /* USER CODE END PD */
 
 /* Private macro -------------------------------------------------------------*/
@@ -55,7 +59,6 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart1;
-
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -89,7 +92,6 @@ int main(void)
 {
 
   /* USER CODE BEGIN 1 */
-
   /* USER CODE END 1 */
 
   /* MCU Configuration--------------------------------------------------------*/
@@ -109,17 +111,20 @@ int main(void)
   /* USER CODE END SysInit */
 
   /* Initialize all configured peripherals */
+  MX_ICACHE_Init();  
   MX_GPIO_Init();
-  MX_ADC1_Init();
-  MX_FDCAN1_Init();
-  MX_I2C1_Init();
-  MX_LPTIM1_Init();
-  MX_SPI1_Init();
-  MX_TIM2_Init();
-  MX_TIM3_Init();
-  MX_USART1_UART_Init();
+  //MX_ADC1_Init();
+  //MX_FDCAN1_Init();
+  //MX_I2C1_Init();
+  //MX_LPTIM1_Init();
+  //MX_SPI1_Init();
+  //MX_TIM2_Init();
+  //MX_TIM3_Init();
+  //MX_USART1_UART_Init();
+  HAL_Delay(500);  //delay for stable USB connection
   MX_USB_Device_Init();
-  MX_ICACHE_Init();
+  HAL_Delay(500);  
+  //MX_ICACHE_Init();
   /* USER CODE BEGIN 2 */
 
   /* USER CODE END 2 */
@@ -129,9 +134,11 @@ int main(void)
   while (1)
   {
     /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
+    logger(TAG, "Gang Gang from main.c");
+    HAL_Delay(1000);
   }
+  /* USER CODE BEGIN 3 */
+
   /* USER CODE END 3 */
 }
 
@@ -143,7 +150,7 @@ void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
   RCC_ClkInitTypeDef RCC_ClkInitStruct = {0};
-
+  RCC_PeriphCLKInitTypeDef PeriphClkInit = {0};
   /** Configure the main internal regulator output voltage
   */
   if (HAL_PWREx_ControlVoltageScaling(PWR_REGULATOR_VOLTAGE_SCALE0) != HAL_OK)
@@ -165,6 +172,14 @@ void SystemClock_Config(void)
   RCC_OscInitStruct.PLL.PLLQ = RCC_PLLQ_DIV2;
   RCC_OscInitStruct.PLL.PLLR = RCC_PLLR_DIV2;
   if (HAL_RCC_OscConfig(&RCC_OscInitStruct) != HAL_OK)
+  {
+    Error_Handler();
+  }
+
+  // Configure the USB clock source to be HSI48
+  PeriphClkInit.PeriphClockSelection = RCC_PERIPHCLK_USB;
+  PeriphClkInit.UsbClockSelection    = RCC_USBCLKSOURCE_HSI48;
+  if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInit) != HAL_OK)
   {
     Error_Handler();
   }
@@ -683,7 +698,10 @@ static void MX_GPIO_Init(void)
 void Error_Handler(void)
 {
   /* USER CODE BEGIN Error_Handler_Debug */
-  /* User can add his own implementation to report the HAL error return state */
+  logger("ERROR", "Error_Handler called in %s:%lu", __FILE__, (unsigned long)__LINE__);
+  
+  HAL_Delay(10); //delay to ensure the message is sent before halting
+
   __disable_irq();
   while (1)
   {
@@ -701,8 +719,14 @@ void Error_Handler(void)
 void assert_failed(uint8_t *file, uint32_t line)
 {
   /* USER CODE BEGIN 6 */
-  /* User can add his own implementation to report the file name and line number,
-     ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
+  logger("ASSERT", "assert_failed called in %s:%lu", file, (unsigned long)line);
+  
+  HAL_Delay(10); //delay to ensure the message is sent before halting
+
+  __disable_irq();
+  while (1)
+  {
+  }
   /* USER CODE END 6 */
 }
 #endif /* USE_FULL_ASSERT */

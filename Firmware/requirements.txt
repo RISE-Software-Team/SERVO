@@ -8,8 +8,9 @@ HARDWARE TEST
 SOFTWARE CONTROL
     COMMUNICATION INTERFACE
         CAN HUB
+        USB (for debugging)
         SPI
-        UART
+        UART 
         I2C (probably not used)
     CONTROL SYSTEM
         CLASS & STRUCTS
