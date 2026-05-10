@@ -114,7 +114,7 @@ int main(void)
   MX_ICACHE_Init();  
   MX_GPIO_Init();
   //MX_ADC1_Init();
-  //MX_FDCAN1_Init();
+  MX_FDCAN1_Init();
   //MX_I2C1_Init();
   //MX_LPTIM1_Init();
   //MX_SPI1_Init();
@@ -131,11 +131,13 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
-  while (1)
+ while (1)
   {
-    /* USER CODE END WHILE */
-    logger(TAG, "Gang Gang from main.c");
+    //logger(TAG, "Gang Gang from main.c");
     HAL_Delay(1000);
+    rgb_set(0, 0, 1);  // BLUE
+    HAL_Delay(1000);
+    rgb_set(0,0,0); // OFF
   }
   /* USER CODE BEGIN 3 */
 
@@ -288,14 +290,17 @@ static void MX_FDCAN1_Init(void)
   hfdcan1.Init.AutoRetransmission = DISABLE;
   hfdcan1.Init.TransmitPause = DISABLE;
   hfdcan1.Init.ProtocolException = DISABLE;
-  hfdcan1.Init.NominalPrescaler = 16;
-  hfdcan1.Init.NominalSyncJumpWidth = 1;
-  hfdcan1.Init.NominalTimeSeg1 = 1;
-  hfdcan1.Init.NominalTimeSeg2 = 1;
-  hfdcan1.Init.DataPrescaler = 1;
-  hfdcan1.Init.DataSyncJumpWidth = 1;
-  hfdcan1.Init.DataTimeSeg1 = 1;
-  hfdcan1.Init.DataTimeSeg2 = 1;
+
+  hfdcan1.Init.NominalPrescaler = 5;
+  hfdcan1.Init.NominalSyncJumpWidth = 4;
+  hfdcan1.Init.NominalTimeSeg1 = 15;
+  hfdcan1.Init.NominalTimeSeg2 = 5;
+
+  hfdcan1.Init.DataPrescaler = 5;
+  hfdcan1.Init.DataSyncJumpWidth = 4;
+  hfdcan1.Init.DataTimeSeg1 = 15;
+  hfdcan1.Init.DataTimeSeg2 = 5;
+
   hfdcan1.Init.StdFiltersNbr = 0;
   hfdcan1.Init.ExtFiltersNbr = 0;
   hfdcan1.Init.TxFifoQueueMode = FDCAN_TX_FIFO_OPERATION;
@@ -304,9 +309,12 @@ static void MX_FDCAN1_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN FDCAN1_Init 2 */
-
+  HAL_FDCAN_ConfigGlobalFilter(&hfdcan1,
+    FDCAN_ACCEPT_IN_RX_FIFO0,
+    FDCAN_REJECT,
+    FDCAN_REJECT_REMOTE,
+    FDCAN_REJECT_REMOTE);
   /* USER CODE END FDCAN1_Init 2 */
-
 }
 
 /**
@@ -683,7 +691,15 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(ENC_CS_GPIO_Port, &GPIO_InitStruct);
 
   /* USER CODE BEGIN MX_GPIO_Init_2 */
+  /* Set initial output level */
+  HAL_GPIO_WritePin(GPIOB, LEDR_Pin | LEDG_Pin | LEDB_Pin, GPIO_PIN_RESET);
 
+  /* Configure LED pins as push-pull outputs */
+  GPIO_InitStruct.Pin   = LEDR_Pin | LEDG_Pin | LEDB_Pin;
+  GPIO_InitStruct.Mode  = GPIO_MODE_OUTPUT_PP;
+  GPIO_InitStruct.Pull  = GPIO_NOPULL;
+  GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_LOW;
+  HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
   /* USER CODE END MX_GPIO_Init_2 */
 }
 

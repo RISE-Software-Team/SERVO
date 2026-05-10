@@ -22,7 +22,6 @@ uint8_t usbTxBuf[USB_BUFLEN];
 uint16_t usbTxBufLen;
 
 /** functions */
-
 // logger 
 extern "C" 
 {
@@ -35,5 +34,16 @@ extern "C"
         va_end(args);
         usbTxBufLen = snprintf((char*) usbTxBuf, USB_BUFLEN, "[%s]: %s\r\n", tag, msgBuf);
         CDC_Transmit_FS(usbTxBuf, usbTxBufLen);
+    }
+}
+
+// rgb_set
+extern "C"
+{
+    void rgb_set(uint8_t r, uint8_t g, uint8_t b) 
+    {
+    HAL_GPIO_WritePin(LEDR_GPIO_Port, LEDR_Pin, r ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LEDG_GPIO_Port, LEDG_Pin, g ? GPIO_PIN_SET : GPIO_PIN_RESET);
+    HAL_GPIO_WritePin(LEDB_GPIO_Port, LEDB_Pin, b ? GPIO_PIN_SET : GPIO_PIN_RESET);
     }
 }
