@@ -13,4 +13,7 @@ extern "C"
 }
 #endif
 
+// Modulo (as opposed to remainder), per https://stackoverflow.com/a/19288271
+int mod(const int dividend, const int divisor);
+
 #endif /* UTILITIES_HPP */

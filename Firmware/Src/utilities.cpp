@@ -47,3 +47,10 @@ extern "C"
     HAL_GPIO_WritePin(LEDB_GPIO_Port, LEDB_Pin, b ? GPIO_PIN_SET : GPIO_PIN_RESET);
     }
 }
+
+inline int mod(const int dividend, const int divisor)
+{
+    int r = dividend % divisor;
+    if (r < 0) r += divisor;
+    return r;
+}

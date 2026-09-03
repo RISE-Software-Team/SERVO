@@ -27,6 +27,7 @@
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 #include "utilities.hpp"
+#include "axis.hpp"
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -59,6 +60,8 @@ TIM_HandleTypeDef htim2;
 TIM_HandleTypeDef htim3;
 
 UART_HandleTypeDef huart1;
+
+Axis axis_test;
 /* USER CODE BEGIN PV */
 
 /* USER CODE END PV */
@@ -222,19 +225,25 @@ static void MX_ADC1_Init(void)
 
   /** Common config
   */
+
+  // Some config is changed to enable the circular DMA mode instead of a single ADC Conversion
+  // maybe re fix with a change to the .ioc file itself but maybe later
   hadc1.Instance = ADC1;
   hadc1.Init.ClockPrescaler = ADC_CLOCK_ASYNC_DIV1;
   hadc1.Init.Resolution = ADC_RESOLUTION_12B;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
-  hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
+  //hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
+    hadc1.Init.ScanConvMode = ADC_SCAN_ENABLE;
   hadc1.Init.EOCSelection = ADC_EOC_SINGLE_CONV;
   hadc1.Init.LowPowerAutoWait = DISABLE;
-  hadc1.Init.ContinuousConvMode = DISABLE;
-  hadc1.Init.NbrOfConversion = 1;
+  //hadc1.Init.ContinuousConvMode = DISABLE;
+    hadc1.Init.ContinuousConvMode = ENABLE;
+  hadc1.Init.NbrOfConversion = 5;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.ExternalTrigConvEdge = ADC_EXTERNALTRIGCONVEDGE_NONE;
-  hadc1.Init.DMAContinuousRequests = DISABLE;
+  //hadc1.Init.DMAContinuousRequests = DISABLE;
+    hadc1.Init.DMAContinuousRequests = ENABLE;
   hadc1.Init.Overrun = ADC_OVR_DATA_PRESERVED;
   hadc1.Init.OversamplingMode = DISABLE;
   if (HAL_ADC_Init(&hadc1) != HAL_OK)
@@ -252,16 +261,23 @@ static void MX_ADC1_Init(void)
 
   /** Configure Regular Channel
   */
-  sConfig.Channel = ADC_CHANNEL_9;
-  sConfig.Rank = ADC_REGULAR_RANK_1;
+  //sConfig.Channel = ADC_CHANNEL_9;
   sConfig.SamplingTime = ADC_SAMPLETIME_2CYCLES_5;
   sConfig.SingleDiff = ADC_SINGLE_ENDED;
   sConfig.OffsetNumber = ADC_OFFSET_NONE;
   sConfig.Offset = 0;
-  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
-  {
-    Error_Handler();
-  }
+
+  // Changing the config a bit to allow multi channel ADC with DMA
+  sConfig.Channel = ADC_CHANNEL_5;  sConfig.Rank = ADC_REGULAR_RANK_1;  // IPROPI
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK){Error_Handler();}
+  sConfig.Channel = ADC_CHANNEL_6;  sConfig.Rank = ADC_REGULAR_RANK_2;  // T_FET
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK){Error_Handler();}
+  sConfig.Channel = ADC_CHANNEL_7;  sConfig.Rank = ADC_REGULAR_RANK_3;  // V_BUS
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK){Error_Handler();}
+  sConfig.Channel = ADC_CHANNEL_8;  sConfig.Rank = ADC_REGULAR_RANK_4;  // T_MOT  
+  if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK){Error_Handler();}
+  //sConfig.Channel = ADC_CHANNEL_9;  sConfig.Rank = ADC_REGULAR_RANK_5;  // POT
+  //if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK){Error_Handler();}
   /* USER CODE BEGIN ADC1_Init 2 */
 
   /* USER CODE END ADC1_Init 2 */
@@ -494,7 +510,8 @@ static void MX_TIM2_Init(void)
   htim2.Instance = TIM2;
   htim2.Init.Prescaler = 0;
   htim2.Init.CounterMode = TIM_COUNTERMODE_UP;
-  htim2.Init.Period = 4294967295;
+  //htim2.Init.Period = 4294967295; // this is like 0.02 hz ?
+  htim2.Init.Period = 5499; // Setting ts to run the PWM frequency at 20KHz [Fpwm = CLK / ARR+1]
   htim2.Init.ClockDivision = TIM_CLOCKDIVISION_DIV1;
   htim2.Init.AutoReloadPreload = TIM_AUTORELOAD_PRELOAD_DISABLE;
   if (HAL_TIM_Base_Init(&htim2) != HAL_OK)
@@ -704,7 +721,11 @@ static void MX_GPIO_Init(void)
 }
 
 /* USER CODE BEGIN 4 */
-
+// ADC DMA CALLBACK
+void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc)
+{
+  axis_test.axis_run();
+}
 /* USER CODE END 4 */
 
 /**

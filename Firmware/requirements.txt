@@ -28,4 +28,22 @@ SOFTWARE CONTROL
             ERROR
             DEBUG
 
+STM32 GPIO, TIMER, AND ADC
+    TIMER2 CHANNEL 3 & 4
+        MOTOR PWM DRV_IN1 & DRV_IN2   (PB10 & PB11)
+    TIMER3 CHANNEL 3 & 4
+        LED RGB BLUE & GREEN        (PB0 & PB1)
+
+    ADC MOTOR DRIVER
+        DRV_IPROPI  ADC1_IN5 (PA0)
+        T_FET       ADC1_IN6 (PA1)
+        V_BUS       ADC1_IN7 (PA2)
+        T_MOT       ADC1_IN8 (PA3)
+        POT         ADC1_IN9 (PA4)
+
+    GPIO MOTOR DRIVER
+        DRV_FLT     GPIO_IN  (PC13)
+        DRV_OFF     GPIO_OUT (PC14)
+        DRV_CS      GPIO_OUT (PC15)
+        ENC_CS      GPIO_OUT (PB12)
 
