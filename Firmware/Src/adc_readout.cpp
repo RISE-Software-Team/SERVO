@@ -1,5 +1,6 @@
 #include "adc_readout.hpp"
 #include "stm32l5xx_hal.h"
+#include <algorithm>
 #include <cmath>
 
 /*
@@ -17,7 +18,7 @@
 extern ADC_HandleTypeDef hadc1;
 
 
-void ADC::ADC_Init(){
+bool ADC::init(){
     if (HAL_ADCEx_Calibration_Start(&hadc1, ADC_SINGLE_ENDED) != HAL_OK)
         return false;
 
@@ -35,7 +36,7 @@ void ADC::set_config(const config_adc config_load){
     cfg_ = config_load;
 }
 
-void ADC::ADC_Update(){
+void ADC::update(){
     // Reset prior error state
     ADC_Error errors = ERROR_NONE;
 
@@ -73,20 +74,25 @@ float ADC::Thermistor_NCT(float v, Thermistor Tcfg_){
     return 1.0f/T2_inv - 273.15f;
 }
 
-void ADC::temperature_check(float temp, Thermistor Tcfg_){
+ADC_Error ADC::temperature_check(float temp, Thermistor Tcfg_){
 
     if (std::isnan(temp)) return Tcfg_.FAULTYREAD;
 
-    if (temp > cfg_.FAILURE_TEMP) return Tcfg_.SHUTDOWN;
+    if (temp > Tcfg_.FAILURE_TEMP) return Tcfg_.SHUTDOWN;
     
-    if (temp > cfg_.WARNING_TEMP) return Tcfg_.WARNING;
-    
+    if (temp > Tcfg_.WARNING_TEMP){
+        Tcfg_.WARNING = true;
+        Tcfg_.derating_scale = 1.0f - (temp - Tcfg_.WARNING_temp) / (Tcfg_.FAILURE_TEMP - Tcfg_.WARNINIG_temp);
+
+        Tcfg_.derating_scale = std::clamp(Tcfg_.derating_scale, 0.0, 1.0f);
+    }
+    else {
+        Tcfg_.derating_scale = 1.0f;
+    }
+
     return ERROR_NONE;
 }
 
-/*
-
-*/
 void ADC::ADC_slow(){
 
     ADC_Error errors = ERROR_NONE;
@@ -103,6 +109,9 @@ void ADC::ADC_slow(){
     // Temp sensor error check
     errors |= temperature_check(result_.T_FET, Thermistor_FET); 
     errors |= temperature_check(result_.T_MOT, Thermistor_MOT);
+
+    scale = std::min(fet_scale, mot_scale);
+
     if (!std::isnan(result_.T_FET) &&
         !std::isnan(result_.T_MOT) &&
         std::fabs(result_.T_FET - result_.T_MOT) > 20.0f)

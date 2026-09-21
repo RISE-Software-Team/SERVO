@@ -17,29 +17,21 @@ TODO:
 
 */
 
-static Encoder* ENC1_SPI = nullptr;
-// Custom callback function after SPI communication finishes
-void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi){
-    // Callback after SPI finished
-    if (hspi->Instance != SPI1) return;
-    ENC1_SPI->ENC_SPI_FINISH();
-}
-
 // SPI Data transfer initialization
-void Encoder::ENC_SPI_START(){
+void Encoder::enc_spi_start(){
     // Initialize SPI data transfer
-    ENC1_SPI = this;
+
     // SPI chip select ENC_CSn [active low]
     HAL_GPIO_WritePin(ENC_CS_GPIO_Port, ENC_CS_Pin, GPIO_PIN_RESET)
-    HAL_SPI_TransmitReceive_IT(&hspi1, enc_tx, enc_rx, 2);
+    HAL_SPI_TransmitReceive_IT(&hspi1, (uint8_t*)enc_tx, (uint8_t*)enc_rx, 1);
 }
 
 // SPI Data transfer complete, data ready 
-void Encoder::ENC_SPI_FINISH(){
+void Encoder::enc_spi_finish(){
     // Deactive SPI Chip select
     HAL_GPIO_WritePin(ENC_CS_GPIO_Port, ENC_CS_Pin, GPIO_PIN_SET);
     
-    uint16_t w = ((uint16_t)enc_rx[0] << 8) | enc_rx[1];
+    uint16_t w = enc_rx;
 
     // Package even parity check based on AS5047P Datasheet
     if (w & 0x4000 || __builtin_parity(w) != 0) {
@@ -78,6 +70,12 @@ void Encoder::set_config(const config_enc& config_load){
 }
 
 
+bool Encoder::init(){
+    enc_state.count_true = 0;
+    enc_state.pos_estimate = 0.0f;
+    enc_state.vel_estimate = 0.0f;
+    data_ready = false;
+}
 
 // Encoder State update
 void Encoder::enc_Update(){
@@ -87,47 +85,43 @@ void Encoder::enc_Update(){
     int delta_count = 0;
     // Update latest data
     int old_count = enc_state.count_wrap;
-    float old_posc   = enc_state.pos_estimate;
-    float old_velc   = enc_state.vel_estimate;
-    float BW_placeholder; // TODO: find this and move it to system config [hardware bounded]
 
+    //  Eliminate velocity jittering 
+    if (fabs(vel_estimate_counts) < 0.5 * dt * cfg_.observer_beta) vel_estimate_counts = 0.0f;
+
+    pos_estimate_counts += dt* vel_estimate_counts;
+    pos_estimate_countwrap += dt * vel_estimate_counts;
 
     if(data_ready){
         data_ready = false;
 
-        float dt = 0;
-
-        // Count Update
-        int new_count = SPI_raw & 0x3FFFF;
+    // Count Update
+        int new_count = SPI_raw & 0x3FFF;
         delta_count = new_count - old_count;
-        int wrap = enc_state.count_wrap + delta_count;
+
+    // modulus to wrap delta to [0 ~ cpr]
+        delta_count = mod(delta_count, cfg_.cpr);
+
+    // change wrapping to [-cpr/2 ~ cpr/2] to differentiate direction
+        if(delta_count > cfg_.cpr * 0.5f) delta_count -= cfg_.cpr;
 
         enc_state.count_true += delta_count;
-        enc_state.count_wrap = mod(wrap, cfg_.cpr);
-
-        float enc_deg = enc_state.count_wrap * 360.0f / cfg_.cpr;
-        float enc_rad = enc_state.count_wrap *2* M_PI / cfg_.cpr;
-
-        // Observer filter
-        /*
+        enc_state.shadow_count += delta_count;
+    // Observer filter
+    /*
         The gain is defined using the 2nd order system equation 
         derived from the discrete equation of alpha-beta filter plant
-        */
+    */
+        float delta_pos = (float)(enc_state.count_true - (int)std::floor(pos_estimate_counts));
 
-        //TODO:
-        // If (Kp && Ki invalid put error check here)
-
-        enc_state.pos_estimate += dt * enc_state.vel_estimate;
-        enc_state.pos_cwrap += dt * enc_state.vel_estimate;
-
-        //wrap est_pos_here
-
-        float delta_pos = enc_state.count_true - enc_state.pos_estimate;
-
-        enc_state.pos_estimate += dt * cfg_.observer_alpha * delta_pos;
-        enc_state.pos_cwrap += dt * cfg_.observer_alpha * delta_pos;
-        //wrap enc_state.pos_cwrap here
-
-        enc_state.vel_estimate += dt * cfg_.observer_beta * delta_pos;
+        pos_estimate_counts += dt * cfg_.observer_alpha * delta_pos;
+        vel_estimate_counts += dt * cfg_.observer_beta * delta_pos;
+    } else {
+        // Encoder fail to update
+        missing_update++
     }
+    
+    // Convert from cpr counts to turn [0 ~ 1]
+        enc_state.vel_estimate = vel_estimate_counts / (float)cfg_.cpr;
+        enc_state.pos_estimate = pos_estimate_counts / (float)cfg_.cpr;
 }

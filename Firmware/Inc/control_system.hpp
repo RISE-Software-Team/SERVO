@@ -20,13 +20,14 @@ TODO:
 class Controller{
 
     public:
-        // Position Control
+        // Controller modes
         enum Control_Mode{
             CONTROL_TORQUE,     // Torque control using inner current loop
             CONTROL_VELOCITY,   // Velocity controller
             CONTROL_POSITION,   // Position controller
         };
 
+        // Controller Error classification
         enum Control_Error : uint32_t{
             ERROR_NONE = 0,
             ERROR_INVALID_GAIN      = 1U << 1,
@@ -34,6 +35,7 @@ class Controller{
             ERROR_REPLANNING        = 1U << 3,
         };
 
+        // Controller class configuration
         struct config_control{
             float pos_KP = 0.0f;
 
@@ -49,30 +51,60 @@ class Controller{
             float inertia = 0.0f;               // Motor Inertia [DATASHEET]
         };
 
-        // Velocity profile
+        // Trajectory planning output component
         struct Trapezoid_component{
             float pos;
             float vel;
             float acc;
         };
 
+        /**
+          * @brief
+        **/
+        bool init();
+
+        /**
+          * @brief main update sequence to calculate the torque setpoint based on the previously planned trajectory
+          * @param timestep based on the PWM frequency clock
+        **/
         void update(float timestep);
+
+        //customize the controller gain from the desired bandwidth
         void update_gain(float BW);
+
+        /**
+          * @brief customize the controller operating mode
+          * @param mode choose between position, velocity, and torque
+        **/
         void set_mode (Control_Mode mode);
 
+        // functions to update controller setpoints
         bool target_pos(float p_target);
         bool target_vel(float v_target);
         bool target_torque(float t_target);
 
-        Control_Error& get_errror() {return error_;};
+        // funtions used to extract controller private variables
+        Control_Error get_errror() {return error_;};
         config_control& get_config() {return cfg_;};
+
+        // Upload config from FLASH
         void set_config(const config_control& config_load);
 
+        /**
+          * @brief torque limiter in the case of exceeding (or increasing) temperature
+          * @param scale is used to ramp down the torque limit if the temperature still increasing
+        **/
+        void torque_temperature_limit(float scale);
+
+        // controller target variables
         float pos_target;
         float vel_target;
         float torque_target;
-        float torque_setpoint;
         int direction; 
+
+        // Controller output
+        float torque_setpoint;
+
 
     private:
 
@@ -96,6 +128,9 @@ class Controller{
         bool traj_ready = false;
         float vel_int;
 
+        float true_torque_limit = 0.0f;
+
+        // Controller structs
         config_control cfg_;
         Control_Error error_ = ERROR_NONE;
         Control_Mode mode_ = CONTROL_TORQUE;

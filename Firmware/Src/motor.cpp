@@ -2,15 +2,20 @@
 #include "motor.hpp"
 #include "main.h"
 #include "stm32l5xx_hal.h"
+#include "stm32l5xx_hal_gpio.h"
+#include "utilities.hpp"
 #include <cmath>
+#include <cstdint>
 #include <math.h>
 #include <algorithm>
+
+
 
 
 bool Motor::arm(){
     // Early Error Check
     if (isarmed_)               return false;
-    if (Error_ == ERROR_NONE)   return false;
+    if (Error_ != ERROR_NONE)   return false;
     //if !axis.docheck()    return false;
 
     PWM_init();
@@ -32,7 +37,13 @@ void Motor::disarm(){
 }
 
 bool Motor::error_check(){
-    return (Error_ != ERROR_NONE);
+    const bool nfault = HAL_GPIO_ReadPin(DRV_FLT_GPIO_Port, DRV_FLT_Pin) == GPIO_PIN_RESET;
+
+    if (nfault){
+        Error_ |= ERROR_DRIVER_FAULT;
+        nfault_read_pending = true;
+    }
+    return (Error_ != ERROR_NONE && nfault);
 }
 
 void Motor::set_duty_target(float desired_duty){
@@ -143,12 +154,101 @@ void Motor::current_inner_loop(float I_LOAD, float V_BUS){
 
 void Motor::current_target(float torque, float timestep){
 
-    i_target = std::clamp(torque / cfg_.torque_constant, -cfg_.current_limit, cfg_.current_limit);
+    i_target = std::clamp(torque / cfg_.torque_constant, -true_torque_limit, true_torque_limit);
 
-    float step = cfg_.current_max_step * dt;
-    i_setpoint += std::clamp(i_setpoint - i_target, -step, step);
+    float step = cfg_.current_max_step * timestep;
+    float delta_i = std::clamp(i_target - i_setpoint, -step, step);
+
+    i_setpoint += delta_i;
+
+    float di_dt = delta_i/timestep;
     
     float vel_estimate = 0.0f; // Placeholder for velocity estimation
-    v_feedforward = i_target * cfg_.resistance + cfg_.torque_constant * (2.0 * M_PI * vel_estimate);
+    v_feedforward = i_setpoint * cfg_.resistance + cfg_.torque_constant * vel_estimate + cfg_.inductance * delta_i;
+
 }
 
+bool Motor::drv_spi(uint16_t tx, uint16_t *rx) {
+    uint16_t in;
+    HAL_GPIO_WritePin(DRV_CS_PORT, DRV_CS_PIN, GPIO_PIN_RESET);
+    HAL_StatusTypeDef s = HAL_SPI_TransmitReceive(&hspi1, (uint8_t*)&tx,
+                                                  (uint8_t*)&in, 1, 10);
+    HAL_GPIO_WritePin(DRV_CS_PORT, DRV_CS_PIN, GPIO_PIN_SET);
+    if (s != HAL_OK) return false;
+    if ((in & 0xC000) != 0xC000) return false;  // top 2 bits always 11
+    *rx = in;
+    return true;
+}
+
+bool Motor::drv_read(uint8_t address, uint8_t *data, uint8_t *status){
+    
+    uint16_t package = 1u << 14 || (static_cast<uint16_t>(address & 0x3Fu) << 8);
+    uint16_t rx; 
+
+    if (!drv_spi(package, &rx)) return false;
+
+    *status = static_cast<uint8_t>((rx >> 8) & 0xFFu);
+    *data = static_cast<uint16_t>(rx & 0xFFu);
+
+    return true;
+}
+
+bool Motor::drv_write(uint8_t address, uint8_t data){
+    uint16_t package = (static_cast<uint16_t>(address & 0x3Fu) << 8) | data;
+    uint16_t rx;
+
+    return drv_spi(package, &rx);
+}
+
+bool Motor::read_nfault(){
+
+    if(!drv_read(DrvReg::STATUS1, &STATUS1_vals, &motor_status)){
+        Error_ = ERROR_SPI_INIT_FAIL;
+        return false;
+    }
+    if(!drv_read(DrvReg::STATUS2, &STATUS2_vals, &motor_status)){
+        Error_ = ERROR_SPI_INIT_FAIL;
+        return false;
+    }
+
+    return true;
+}
+
+bool Motor::init(){
+    uint8_t data_init = 0;
+
+    disarm();
+    
+    if(!drv_read(DrvReg::DEVICE_ID, &data_init, &motor_status)){
+        Error_ = ERROR_SPI_INIT_FAIL;
+        return false;
+    }
+    uint8_t dev_id = static_cast<uint8_t>(data_init & 0x3F);
+
+    if(dev_id != 0x25) {
+        Error_ = ERROR_SPI_INIT_FAIL;
+        return false;
+    }
+
+    if(!drv_write(DrvReg::CFG1_REG, CONFIG1_VAL)) {
+        Error_ = ERROR_SPI_INIT_FAIL;
+        return false;
+    }
+
+    if(!drv_write(DrvReg::CFG2_REG,  CONFIG2_VAL)){
+        Error_ = ERROR_SPI_INIT_FAIL;
+        return false;
+    }
+    
+    if(!drv_write(DrvReg::CFG3_REG, CONFIG3_VAL)){
+        Error_ = ERROR_SPI_INIT_FAIL;
+        return false;
+    }
+
+    if(!drv_write(DrvReg::CFG4_REG,  CONFIG4_VAL)){
+        Error_ = ERROR_SPI_INIT_FAIL;
+        return false;
+    }
+
+    return true;
+}

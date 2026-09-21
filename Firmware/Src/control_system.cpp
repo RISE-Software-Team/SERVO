@@ -24,6 +24,12 @@ void Controller::update_gain(float BW){
     cfg_.vel_KI = v_ki;
 
 }
+
+void Controller::torque_temperature_limit(float scale){
+    float modifier = std::clamp(scale, 0.0f, 1.0f);
+    true_torque_limit = cfg_.torque_limit * modifier;
+}
+
 bool Controller::target_pos(float p_target){
     if (std::isnan(p_target)){
         error_ |= ERROR_INVALID_TARGET;
@@ -58,7 +64,7 @@ bool Controller::target_torque(float t_target){
         return false;
     }
     
-    torque_target = std::clamp(t_target, -cfg_.torque_limit, cfg_.torque_limit);
+    torque_target = std::clamp(t_target, true_torque_limit, true_torque_limit);
 }
 
 void Controller::set_mode(Control_mode mode){
@@ -115,7 +121,7 @@ void Controller::update(float timestep){
             break;
         }
 
-    torque_setpoint = std::clamp(torque_setpoint, -cfg_.torque_limit, cfg_.torque_limit);
+    torque_setpoint = std::clamp(torque_setpoint, true_torque_limit, true_torque_limit);
 }
 
 /*
