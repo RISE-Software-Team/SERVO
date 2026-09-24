@@ -1,0 +1,131 @@
+\doxysection{control\+\_\+system.\+hpp}
+\hypertarget{control__system_8hpp_source}{}\label{control__system_8hpp_source}\index{Inc/control\_system.hpp@{Inc/control\_system.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ MAIN\ CONTROL\ SYSTEM}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ Utilize\ the\ PID\ for\ position\ and\ velocity}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00006\ \textcolor{comment}{Control\ system\ using\ the\ cascaded\ Position-\/Velocity\ P-\/PI\ controller}}
+\DoxyCodeLine{00007\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}encoder.hpp"{}}}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00012\ \textcolor{comment}{TODO:}}
+\DoxyCodeLine{00013\ \textcolor{comment}{\ \ \ \ \string~find\ bandwidth}}
+\DoxyCodeLine{00014\ \textcolor{comment}{\ \ \ \ \string~set\ int,\ vel,\ and\ torque\ limit}}
+\DoxyCodeLine{00015\ \textcolor{comment}{\ \ \ \ \string~maximum\ velocity\ threshold\ [whether\ or\ not\ the\ current\ speed\ is\ too\ fast\ to\ reach\ the\ target\ pos]}}
+\DoxyCodeLine{00016\ \textcolor{comment}{\ \ \ \ \string~find\ motor\ inertia}}
+\DoxyCodeLine{00017\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00018\ }
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_controller}{Controller}}\{}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum}\ \doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1}{Control\_Mode}}\{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1a5171cce208acecc48612d83afcd9d1ad}{CONTROL\_TORQUE}},\ \ \ \ \ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1acbd20d5c7bebde8ddd1a5eb2fed27423}{CONTROL\_VELOCITY}},\ \ \ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1ae597a49eb9429220ba5f1219ea597d85}{CONTROL\_POSITION}},\ \ \ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum}\ \doxymbox{\hyperlink{class_controller_a44fa6a9048bd9507ddbe269df516e21c}{Control\_Error}}\ :\ uint32\_t\{}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_NONE\ =\ 0,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_INVALID\_GAIN\ \ \ \ \ \ =\ 1U\ <<\ 1,}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_INVALID\_TARGET\ \ \ \ =\ 1U\ <<\ 2,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_REPLANNING\ \ \ \ \ \ \ \ =\ 1U\ <<\ 3,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00037\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{struct_controller_1_1config__control}{config\_control}}\{}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1config__control_aafe049833ae3de3dfd4504e95be1cf4c}{pos\_KP}}\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1config__control_a2068b7c0043fcb7b186d8bcda8fc1ada}{vel\_KP}}\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1config__control_afcd32747d0ce095040ea7fbc51b6d1a4}{vel\_KI}}\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1config__control_ae014a12cd43ab599f2a088ea79775eb0}{integrator\_limit}}\ =\ 0.0f;\ \ \ \ \ }
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1config__control_ae2b0d8741a1f012740c4447289061c14}{velocity\_limit}}\ =\ 0.0f;\ \ \ \ \ \ \ }
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1config__control_a7ba57cd187a6b41f86e514206db28a32}{torque\_limit}}\ =\ 0.0f;\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1config__control_a4a82d9e403b5fd95714e67a35419093d}{velocity\_threshold}}\ =\ 0.0f;\ \ \ }
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1config__control_aa1135a395966b81f5e65f448571c1262}{bandwidth}}\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1config__control_ab399ca7065ad837ad1d55f6b8640e964}{max\_bandwidth}}\ =\ 0.0f;\ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1config__control_a28fe82d3414231d022303f87fb40558f}{inertia}}\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{struct_controller_1_1_trapezoid__component}{Trapezoid\_component}}\{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1_trapezoid__component_ad5989f5cc5180202a5a3edee2ed8550d}{pos}};\ \ \ \ \ \ }
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1_trapezoid__component_a8b53221f426ba62b21b2cd3bfbee42a3}{vel}};\ \ \ \ \ \ }
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_controller_1_1_trapezoid__component_afad70077154b6aab0e81a1c02f651f2c}{acc}};\ \ \ \ \ \ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00062\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_controller_afbeae1ad3a4c472280e4d3423846559d}{init}}();}
+\DoxyCodeLine{00063\ }
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_controller_ae601bc0f8ac648387518c4f3672b46e0}{update}}(\textcolor{keywordtype}{float}\ timestep);}
+\DoxyCodeLine{00069\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_controller_abccf398c7ae67355fa973ff01c346c1c}{update\_gain}}(\textcolor{keywordtype}{float}\ BW);}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_controller_a5cfd7a1239cd66f7f35acfce7e30374b}{set\_mode}}\ (\doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1}{Control\_Mode}}\ mode);}
+\DoxyCodeLine{00078\ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_controller_a3dab4e8b396fbaf4d6f952e65922abc2}{target\_pos}}(\textcolor{keywordtype}{float}\ p\_target);}
+\DoxyCodeLine{00085\ }
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_controller_a3add81ddbb0ddbb25a7ae4a217c82628}{target\_vel}}(\textcolor{keywordtype}{float}\ v\_target);}
+\DoxyCodeLine{00092\ }
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_controller_ae5ec3b0883a5f5c9b2458dae68588633}{target\_torque}}(\textcolor{keywordtype}{float}\ t\_target);}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_controller_a44fa6a9048bd9507ddbe269df516e21c}{Control\_Error}}\ \doxymbox{\hyperlink{class_controller_a4a484d26faab3c4ebbe4bb5640c9ecd0}{get\_error}}()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ error\_;\ \}}
+\DoxyCodeLine{00102\ }
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_controller_1_1config__control}{config\_control}}\&\ \doxymbox{\hyperlink{class_controller_ae7c1ca77576c44be064e544564c7751d}{get\_config}}()\ \{\ \textcolor{keywordflow}{return}\ cfg\_;\ \}}
+\DoxyCodeLine{00105\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_controller_abc0e0cf03ed7114d175a667036aaffe2}{set\_config}}(\textcolor{keyword}{const}\ config\_control\&\ config\_load);}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_controller_acb6ac3051db68dcb1d0a7cdf31c517d5}{torque\_temperature\_limit}}(\textcolor{keywordtype}{float}\ scale);}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00115\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ pos\_target;}
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ vel\_target;}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ torque\_target;}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ direction;\ }
+\DoxyCodeLine{00119\ }
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ torque\_setpoint;}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00122\ }
+\DoxyCodeLine{00123\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ V\_max;}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ A\_max;}
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ X\_i;\ \ \ \ \ \ \textcolor{comment}{//\ Initial\ Position}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ X\_f;\ \ \ \ \ \ \textcolor{comment}{//\ Final\ Position}}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ V\_i;\ \ \ \ \ \ \textcolor{comment}{//\ Initial\ Velocity}}
+\DoxyCodeLine{00131\ }
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ t\_a;\ \ \ \ \ \ \textcolor{comment}{//\ Acceleration\ time}}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ t\_c;\ \ \ \ \ \ \textcolor{comment}{//\ Cruising\ time}}
+\DoxyCodeLine{00134\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ t\_d;\ \ \ \ \ \ \textcolor{comment}{//\ Deceleration\ time}}
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ d\_a;\ \ \ \ \ \ \textcolor{comment}{//\ Acceleration\ distance}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ d\_c;\ \ \ \ \ \ \textcolor{comment}{//\ Cruising\ distance}}
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ d\_d;\ \ \ \ \ \ \textcolor{comment}{//\ Deceleration\ distance}}
+\DoxyCodeLine{00138\ }
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ t\_tot;}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ d\_tot;}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ t\_traj;}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ traj\_ready\ =\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ vel\_int;}
+\DoxyCodeLine{00144\ }
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ true\_torque\_limit\ =\ 0.0f;}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Controller\ structs}}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ config\_control\ cfg\_;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_controller_a44fa6a9048bd9507ddbe269df516e21c}{Control\_Error}}\ error\_\ =\ ERROR\_NONE;}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1}{Control\_Mode}}\ mode\_\ =\ \doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1a5171cce208acecc48612d83afcd9d1ad}{CONTROL\_TORQUE}};}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Velocity\ planning}}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ trapezoid\_planning(\textcolor{keywordtype}{float}\ Xi,\ \textcolor{keywordtype}{float}\ Xf,\ \textcolor{keywordtype}{float}\ Vi,\ \textcolor{keywordtype}{float}\ Amax,\ \textcolor{keywordtype}{float}\ Vmax);}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ Trapezoid\_component\ trapezoid\_running(\textcolor{keywordtype}{float}\ time);}
+\DoxyCodeLine{00155\ }
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ position\_control(\textcolor{keywordtype}{float}\ target,\ \textcolor{keywordtype}{float}\ position,\ \textcolor{keywordtype}{float}\ vel\_ff);}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ velocity\_control(\textcolor{keywordtype}{float}\ vel\_setpoint,\ \textcolor{keywordtype}{float}\ vel,\ \textcolor{keywordtype}{float}\ acc\_ff,\ \textcolor{keywordtype}{float}\ dt);}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ torque\_control();}
+\DoxyCodeLine{00159\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_encoder}{Encoder}}\&\ enc\_;}
+\DoxyCodeLine{00161\ \};}
+
+\end{DoxyCode}

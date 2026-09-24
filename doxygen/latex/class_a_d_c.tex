@@ -1,0 +1,183 @@
+\doxysection{ADC Class Reference}
+\hypertarget{class_a_d_c}{}\label{class_a_d_c}\index{ADC@{ADC}}
+
+
+module to process the \doxylink{class_a_d_c}{ADC} values  
+
+
+
+
+{\ttfamily \+\#include $<$adc\+\_\+readout.\+hpp$>$}
+
+
+
+Collaboration diagram for ADC:
+% FIG 0
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \doxymbox{\hyperlink{struct_a_d_c_1_1config__adc}{config\+\_\+adc}}
+\item 
+struct \doxymbox{\hyperlink{struct_a_d_c_1_1_a_d_c___volts}{ADC\+\_\+\+Volts}}
+\item 
+struct \doxymbox{\hyperlink{struct_a_d_c_1_1_a_d_c___result}{ADC\+\_\+\+Result}}
+\item 
+struct \doxymbox{\hyperlink{struct_a_d_c_1_1_thermistor}{Thermistor}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_a_d_c_af1e24b6c17ca622e6b0cac533a9e3544}\label{class_a_d_c_af1e24b6c17ca622e6b0cac533a9e3544} 
+enum {\bfseries ADC\+\_\+\+Error} : uint32\+\_\+t \{ \newline
+{\bfseries ERROR\+\_\+\+NONE} = 0
+, {\bfseries ERROR\+\_\+\+IDRV\+\_\+\+INVALID\+\_\+\+READ} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 1
+, {\bfseries ERROR\+\_\+\+IDRV\+\_\+\+CURRENT\+\_\+\+OVER} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 2
+, {\bfseries ERROR\+\_\+\+TFET\+\_\+\+INVALID\+\_\+\+READ} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 3
+, \newline
+{\bfseries ERROR\+\_\+\+TMOT\+\_\+\+INVALID\+\_\+\+READ} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 4
+, {\bfseries ERROR\+\_\+\+TFET\+\_\+\+TEMP\+\_\+\+FAILURE} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 7
+, {\bfseries ERROR\+\_\+\+TMOT\+\_\+\+TEMP\+\_\+\+FAILURE} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 8
+, {\bfseries ERROR\+\_\+\+TEMP\+\_\+\+MISMATCH} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 9
+, \newline
+{\bfseries ERROR\+\_\+\+VBUS\+\_\+\+INVALID\+\_\+\+READ} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 10
+, {\bfseries ERROR\+\_\+\+VBUS\+\_\+\+UNDERVOLTAGE} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 11
+, {\bfseries ERROR\+\_\+\+VBUS\+\_\+\+OVERVOLTAGE} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 12
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \doxymbox{\hyperlink{class_a_d_c_a7873fde0b99f5ec62ec644ad360a5fe3}{init}} ()
+\begin{DoxyCompactList}\small\item\em Calibration and initialization of the DMA. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_a_d_c_a868f0b8d3f780712c3e2621d9b4b58d4}{update}} ()
+\begin{DoxyCompactList}\small\item\em converting the raw \doxylink{class_a_d_c}{ADC} reading to the observable values \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{class_a_d_c_ac2670e8ec346e4a92707891c28c5b14d}{error\+\_\+check}} () const \doxymbox{\hyperlink{struct_a_d_c_1_1_a_d_c___result}{ADC\+\_\+\+Result}} \&get() const
+\begin{DoxyCompactList}\small\item\em check \doxylink{class_a_d_c}{ADC} status \end{DoxyCompactList}\item 
+\Hypertarget{class_a_d_c_ae9315a50585c165c36060e133c576fc6}\label{class_a_d_c_ae9315a50585c165c36060e133c576fc6} 
+const \doxymbox{\hyperlink{struct_a_d_c_1_1config__adc}{config\+\_\+adc}} \& {\bfseries get\+\_\+config} () const
+\item 
+\Hypertarget{class_a_d_c_ae649007802fdfdd4d67c05f960e3177d}\label{class_a_d_c_ae649007802fdfdd4d67c05f960e3177d} 
+ADC\+\_\+\+Error \& {\bfseries get\+\_\+error} ()
+\item 
+\Hypertarget{class_a_d_c_a173cce4df647dfd99c2effd440ecc306}\label{class_a_d_c_a173cce4df647dfd99c2effd440ecc306} 
+void {\bfseries set\+\_\+config} (const \doxymbox{\hyperlink{struct_a_d_c_1_1config__adc}{config\+\_\+adc}} \&config\+\_\+load)
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\doxymbox{\hyperlink{struct_a_d_c_1_1_thermistor}{Thermistor}} \doxymbox{\hyperlink{class_a_d_c_a789dd77e2a4ad0412801682f212623f6}{Thermistor\+\_\+\+FET}}
+\item 
+\doxymbox{\hyperlink{struct_a_d_c_1_1_thermistor}{Thermistor}} \doxymbox{\hyperlink{class_a_d_c_a656e878c2b892f0cd553cf5c2b62c580}{Thermistor\+\_\+\+MOT}}
+\item 
+\Hypertarget{class_a_d_c_a8a5a5d40632b715de4ff5bc0d8e54924}\label{class_a_d_c_a8a5a5d40632b715de4ff5bc0d8e54924} 
+bool {\bfseries adc\+\_\+slow}
+\item 
+\Hypertarget{class_a_d_c_a5a0ce376fe2abd46902f60b4b023bcf6}\label{class_a_d_c_a5a0ce376fe2abd46902f60b4b023bcf6} 
+bool {\bfseries TMOT\+\_\+\+WARNING}
+\item 
+\Hypertarget{class_a_d_c_aa22a5a9a84176f9fe7ad59c0595d4692}\label{class_a_d_c_aa22a5a9a84176f9fe7ad59c0595d4692} 
+bool {\bfseries TFET\+\_\+\+WARNING}
+\item 
+\Hypertarget{class_a_d_c_a3f0e6efe459c5e3403a9574686b7dbd1}\label{class_a_d_c_a3f0e6efe459c5e3403a9574686b7dbd1} 
+float {\bfseries mot\+\_\+scale}
+\item 
+\Hypertarget{class_a_d_c_ad02e2cae5044dbf2596c93544051262b}\label{class_a_d_c_ad02e2cae5044dbf2596c93544051262b} 
+float {\bfseries fet\+\_\+scale}
+\item 
+\Hypertarget{class_a_d_c_a1818c8a4fc88a155e658148d8492adfb}\label{class_a_d_c_a1818c8a4fc88a155e658148d8492adfb} 
+float {\bfseries scale}
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+module to process the \doxylink{class_a_d_c}{ADC} values 
+
+The module for now consist of the IPROPI from the motor driver \+[\href{https://tinyurl.com/MODRV}{\texttt{https:\+/\+/\+tinyurl.\+com/\+\+MODRV}}], VBUS \+[Schematics], Temperature from \doxylink{struct_a_d_c_1_1_thermistor}{Thermistor} : TFET \+[\href{https://tinyurl.com/TFET0}{\texttt{https:\+/\+/\+tinyurl.\+com/\+\+TFET0}}] TMOT \+[\href{https://tinyurl.com/TMOT0}{\texttt{https:\+/\+/\+tinyurl.\+com/\+\+TMOT0}}] 
+
+\label{class_a_d_c_doc-func-members}
+\Hypertarget{class_a_d_c_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_a_d_c_ac2670e8ec346e4a92707891c28c5b14d}\index{ADC@{ADC}!error\_check@{error\_check}}
+\index{error\_check@{error\_check}!ADC@{ADC}}
+\doxysubsubsection{\texorpdfstring{error\_check()}{error\_check()}}
+{\footnotesize\ttfamily \label{class_a_d_c_ac2670e8ec346e4a92707891c28c5b14d} 
+bool ADC::\+error\+\_\+check (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption}) const \&\hspace{0.3cm}{\ttfamily [inline]}}
+
+
+
+check \doxylink{class_a_d_c}{ADC} status 
+
+return error bitmask for monitoring \Hypertarget{class_a_d_c_a7873fde0b99f5ec62ec644ad360a5fe3}\index{ADC@{ADC}!init@{init}}
+\index{init@{init}!ADC@{ADC}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily \label{class_a_d_c_a7873fde0b99f5ec62ec644ad360a5fe3} 
+bool ADC::\+init (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Calibration and initialization of the DMA. 
+
+\begin{DoxyReturn}{Returns}
+TRUE if DMA is calibrated and initialized 
+\end{DoxyReturn}
+\Hypertarget{class_a_d_c_a868f0b8d3f780712c3e2621d9b4b58d4}\index{ADC@{ADC}!update@{update}}
+\index{update@{update}!ADC@{ADC}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily \label{class_a_d_c_a868f0b8d3f780712c3e2621d9b4b58d4} 
+void ADC::\+update (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+converting the raw \doxylink{class_a_d_c}{ADC} reading to the observable values 
+
+The fast loop update IPROPI/\+\+ILOAD for the current inner loop the slow loop update TFET, TMOT, and VBUS for safety monitorization 
+
+\label{class_a_d_c_doc-variable-members}
+\Hypertarget{class_a_d_c_doc-variable-members}
+\doxysubsection{Member Data Documentation}
+\Hypertarget{class_a_d_c_a789dd77e2a4ad0412801682f212623f6}\index{ADC@{ADC}!Thermistor\_FET@{Thermistor\_FET}}
+\index{Thermistor\_FET@{Thermistor\_FET}!ADC@{ADC}}
+\doxysubsubsection{\texorpdfstring{Thermistor\_FET}{Thermistor\_FET}}
+{\footnotesize\ttfamily \label{class_a_d_c_a789dd77e2a4ad0412801682f212623f6} 
+\doxymbox{\hyperlink{struct_a_d_c_1_1_thermistor}{Thermistor}} ADC::\+\+Thermistor\+\_\+\+FET}
+
+{\bfseries Initial value:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 10000.0f,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 3453.0f,\ \ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 80.0f,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 110.0f,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ fet\_scale,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ TFET\_WARNING,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TFET\_INVALID\_READ,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TFET\_TEMP\_FAILURE}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+\Hypertarget{class_a_d_c_a656e878c2b892f0cd553cf5c2b62c580}\index{ADC@{ADC}!Thermistor\_MOT@{Thermistor\_MOT}}
+\index{Thermistor\_MOT@{Thermistor\_MOT}!ADC@{ADC}}
+\doxysubsubsection{\texorpdfstring{Thermistor\_MOT}{Thermistor\_MOT}}
+{\footnotesize\ttfamily \label{class_a_d_c_a656e878c2b892f0cd553cf5c2b62c580} 
+\doxymbox{\hyperlink{struct_a_d_c_1_1_thermistor}{Thermistor}} ADC::\+\+Thermistor\+\_\+\+MOT}
+
+{\bfseries Initial value:}
+\begin{DoxyCode}{0}
+\DoxyCodeLine{\{}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 10000.0f,\ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 4000.0f,\ \ \ }
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 80.0f,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ 110.0f,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ mot\_scale,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ TMOT\_WARNING,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TMOT\_INVALID\_READ,}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TMOT\_TEMP\_FAILURE}
+\DoxyCodeLine{\ \ \ \ \ \ \ \ \}}
+
+\end{DoxyCode}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+Inc/adc\+\_\+readout.\+hpp\item 
+Src/adc\+\_\+readout.\+cpp\end{DoxyCompactItemize}

@@ -1,0 +1,20 @@
+\doxysection{pwm.\+hpp}
+\hypertarget{pwm_8hpp_source}{}\label{pwm_8hpp_source}\index{Inc/pwm.hpp@{Inc/pwm.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ PWM\ output\ from\ the\ STM32\ for\ motor\ control}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ ACTIVE\ TIMER\ :}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ TIM2\ CH3\ :\ MOTOR\ CONTROL\ PWM\ POSITIVE\ [DRV\_IN1]}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ TIM2\ CH4\ :\ MOTOR\ CONTROL\ PWM\ NEGATIVE\ [DRV\_IN2]}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ }}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ TIM3\ CH3\ :\ LED\ RGB\ CONTROL\ BLUE}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ TIM3\ CH4\ :\ LED\ RGB\ CONTROL\ GREEN}}
+\DoxyCodeLine{00010\ \textcolor{comment}{\ *\ LED\ RGB\ CONTROL\ RED\ MISSING\ (?)}}
+\DoxyCodeLine{00011\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00013\ \textcolor{keywordtype}{void}\ PWM\_init();}
+\DoxyCodeLine{00014\ \textcolor{keywordtype}{void}\ PWM\_set\_duty(\textcolor{keywordtype}{float}\ duty\_cycle);}
+
+\end{DoxyCode}

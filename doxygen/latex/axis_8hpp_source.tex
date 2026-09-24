@@ -1,0 +1,123 @@
+\doxysection{axis.\+hpp}
+\hypertarget{axis_8hpp_source}{}\label{axis_8hpp_source}\index{Inc/axis.hpp@{Inc/axis.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ Main\ Servo\ function}}
+\DoxyCodeLine{00002\ \textcolor{comment}{//\ This\ is\ where\ everything\ is\ being\ ran\ on}}
+\DoxyCodeLine{00003\ \textcolor{comment}{//\ Task\ priority,\ calibration\ sequence,\ open\ and\ closed\ loop\ control}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ "{}encoder.hpp"{}}}
+\DoxyCodeLine{00006\ \textcolor{preprocessor}{\#include\ "{}motor.hpp"{}}}
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ "{}control\_system.hpp"{}}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#include\ "{}adc\_readout.hpp"{}}}
+\DoxyCodeLine{00009\ \textcolor{preprocessor}{\#include\ "{}stm32l552xx.h"{}}}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#include\ "{}utilities.hpp"{}}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#include\ <cstddef>}}
+\DoxyCodeLine{00013\ }
+\DoxyCodeLine{00021\ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{struct_axis}{Axis}}\{}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Operating\ axis\ states}}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum\ class}\ Axis\_States\{}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ UNINITIALIZED,}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ SETUP,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ IDLE,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ CALIBRATING,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ CLOSED\_LOOP,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ AXIS\_ERROR}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Axis\ error\ handling\ utilizing\ bitmask}}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum}\ \ Axis\_Error\ :\ uint32\_t\{}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_NONE\ \ \ \ \ \ \ \ \ \ =\ 0,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_ADC\ \ \ \ \ \ \ \ \ \ \ =\ 1U\ <<\ 1,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_ENCODER\ \ \ \ \ \ \ =\ 1U\ <<\ 2,}
+\DoxyCodeLine{00038\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_MOTOR\ \ \ \ \ \ \ \ \ =\ 1U\ <<\ 3,}
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_CONTROLLER\ \ \ \ =\ 1U\ <<\ 4,}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00041\ }
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Servo\ calibration\ procedure}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum}\ calibration\ \{}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ RESISTANCE,}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ INDUCTANCE,}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ DIRECTION,}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ FINISH,}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00050\ }
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Control\ loop\ frequency\ (based\ on\ PWM\ Timer)}}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{float}\ control\_freq\ =\ 20000.0f;}
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ \textcolor{keywordtype}{float}\ dt\ \ \ \ \ \ \ \ \ \ \ =\ 1/control\_freq;}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{struct_axis_a43fcae1d66d46ae9d035ec3fdc696892}{init}}();}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \textcolor{comment}{/*}}
+\DoxyCodeLine{00062\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ @brief\ Executes\ the\ error\ check\ and\ switch\ cases\ based\ on\ states\_}}
+\DoxyCodeLine{00063\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *}}
+\DoxyCodeLine{00064\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ *\ running\ at\ control\_freq}}
+\DoxyCodeLine{00065\ \textcolor{comment}{\ \ \ \ \ \ \ \ \ */}}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ update();}
+\DoxyCodeLine{00067\ }
+\DoxyCodeLine{00071\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{struct_axis_abbb9f3df6154f406b7ee6d96a5f3f224}{set\_calibration}}(calibration\ \doxymbox{\hyperlink{struct_axis_abbb9f3df6154f406b7ee6d96a5f3f224}{set\_calibration}});}
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{struct_axis_a1fa66674572d3eedf99d43bc05e5eac2}{set\_state}}(Axis\_States\ states);}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{struct_axis_a69fe82acc364ad17fbec4ee61a9b5123}{set\_position}}(\textcolor{keywordtype}{float}\ p\_target);}
+\DoxyCodeLine{00087\ }
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{struct_axis_a8b0b004b24a50d89f93d1f95faafc082}{set\_velocity}}(\textcolor{keywordtype}{float}\ v\_target);}
+\DoxyCodeLine{00094\ }
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{struct_axis_a453817b3cbf2d1a874a227c5c5fb34ec}{set\_torque}}(\textcolor{keywordtype}{float}\ t\_target);}
+\DoxyCodeLine{00101\ }
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_axis_adc6d5e3ebaa39a3984b0b4aa97af92e7}{motor\_current}}();}
+\DoxyCodeLine{00107\ }
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{struct_axis_a0a1d1abb6b162d4847554f5035c0cedb}{save\_config}}();}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00114\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00115\ }
+\DoxyCodeLine{00116\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calibration\ state}}
+\DoxyCodeLine{00117\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ timer;}
+\DoxyCodeLine{00118\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ t\_settle\ =\ 0.0f;}
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ t\_measure\ =\ 0.0f;}
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ I\_init;}
+\DoxyCodeLine{00121\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ calib\_duty\ =\ 0.1f;}
+\DoxyCodeLine{00122\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ enc\_init;\ }
+\DoxyCodeLine{00123\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ enc\_finish;}
+\DoxyCodeLine{00124\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Missed\ ADC\ /\ ENCODER\ error\ count}}
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ misscount;}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Axis-\/owned\ subclasses}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_encoder}{Encoder}}\ encoder\_;}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_motor}{Motor}}\ motor\_;}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_controller}{Controller}}\ controller\_;}
+\DoxyCodeLine{00132\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_a_d_c}{ADC}}\ adc\_;}
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_s_p_i__manager}{SPI\_manager}}\ spi\_;}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ load\_config();}
+\DoxyCodeLine{00136\ }
+\DoxyCodeLine{00137\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Magic\ number\ i\ made\ up\ to\ validate\ FLASH\ save\ attempts}}
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint32\_t\ xvalid\ =\ 0x69674200;}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ FLASH\ saving\ layout\ to\ ensure\ no\ overlapping\ data}}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint32\_t\ xlayout\ =}
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keyword}{sizeof}(\doxymbox{\hyperlink{struct_encoder_1_1config__enc}{Encoder::config\_enc}})\ \ \ \ \ \ \ \ \ \ \ \ \ *\ 1u}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \ \ \ \ +\ \textcolor{keyword}{sizeof}(\doxymbox{\hyperlink{struct_motor_1_1config__mot}{Motor::config\_mot}})\ \ \ \ \ \ \ \ \ \ \ \ \ *\ 31u}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \ \ \ \ +\ \textcolor{keyword}{sizeof}(\doxymbox{\hyperlink{struct_controller_1_1config__control}{Controller::config\_control}})\ \ \ \ *\ 131u}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \ \ \ \ +\ \textcolor{keyword}{sizeof}(\doxymbox{\hyperlink{struct_a_d_c_1_1config__adc}{ADC::config\_adc}})\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ *\ 521u;}
+\DoxyCodeLine{00146\ }
+\DoxyCodeLine{00147\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Axis\ States}}
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ Axis\_States\ states\_\ =\ Axis::Axis\_States::UNINITIALIZED;}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ Axis\_Error\ \ Error\_\ \ =\ ERROR\_NONE;}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ calibration\ calibration\_\ =\ FINISH;}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Motor\ resistance,\ inductance\ and\ encoder\ calibration\ sequence}}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ calibration\_sequence(calibration\ calibration\_state);}
+\DoxyCodeLine{00154\ }
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Pull\ error\ from\ all\ modules\ get\_error}}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ error\_check();}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ SPI\_finish();}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \};}
+
+\end{DoxyCode}

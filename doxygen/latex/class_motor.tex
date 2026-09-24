@@ -1,0 +1,155 @@
+\doxysection{Motor Class Reference}
+\hypertarget{class_motor}{}\label{class_motor}\index{Motor@{Motor}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \doxymbox{\hyperlink{struct_motor_1_1config__mot}{config\+\_\+mot}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_motor_ac522cb0f3603d175f3c27d397b8c4f09}\label{class_motor_ac522cb0f3603d175f3c27d397b8c4f09} 
+enum {\bfseries Motor\+\_\+mode} \{ {\bfseries MOTOR\+\_\+\+IDLE}
+, {\bfseries MOTOR\+\_\+\+OPEN\+\_\+\+CONTROL}
+, {\bfseries MOTOR\+\_\+\+CLOSED\+\_\+\+CONTROL}
+ \}
+\item 
+\Hypertarget{class_motor_ab72f93571b0fb77389c21104a22e9e3a}\label{class_motor_ab72f93571b0fb77389c21104a22e9e3a} 
+enum {\bfseries Motor\+\_\+\+Error} : uint32\+\_\+t \{ \newline
+{\bfseries ERROR\+\_\+\+NONE} = 0
+, {\bfseries ERROR\+\_\+\+INVALID\+\_\+\+RESISTANCE} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 1
+, {\bfseries ERROR\+\_\+\+INVALID\+\_\+\+INDUCTANCE} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 2
+, {\bfseries ERROR\+\_\+\+INVALID\+\_\+\+GAIN} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 3
+, \newline
+{\bfseries ERROR\+\_\+\+DRIVER\+\_\+\+FAULT} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 4
+, {\bfseries ERROR\+\_\+\+SPI\+\_\+\+INIT\+\_\+\+FAIL} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 5
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_motor_a02520cece592b86d94894b7e62dd47ce}\label{class_motor_a02520cece592b86d94894b7e62dd47ce} 
+bool {\bfseries Calculate\+\_\+R} (float V, float I)
+\item 
+\Hypertarget{class_motor_a3bfcce8aa3b85a090b317e9047c19f4f}\label{class_motor_a3bfcce8aa3b85a090b317e9047c19f4f} 
+bool {\bfseries Calculate\+\_\+L} (float V, float I\+\_\+init, float I\+\_\+final, float dt)
+\item 
+bool \doxymbox{\hyperlink{class_motor_af2bcae5f3d72a3a7cff006b3db0e6c12}{Is\+\_\+calibrated}} ()
+\begin{DoxyCompactList}\small\item\em checking motor config values to determine whether or not the calibration sequence is finished \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_motor_ae1cdbc2c03e4d19bdca31364ce994556}{set\+\_\+duty\+\_\+target}} (float duty)
+\begin{DoxyCompactList}\small\item\em public function to change the desired duty cyccle for open loop controller \end{DoxyCompactList}\item 
+\Hypertarget{class_motor_a8cdf10c1428a3c3670677c04faea34fc}\label{class_motor_a8cdf10c1428a3c3670677c04faea34fc} 
+void {\bfseries set\+\_\+mode} (Motor\+\_\+mode mode)
+\item 
+void \doxymbox{\hyperlink{class_motor_aa3587f1672346fa8a845b3e62da0c25f}{current\+\_\+target}} (float torque, float timestep)
+\begin{DoxyCompactList}\small\item\em torque to current convertion used to determine the target current for the motor \end{DoxyCompactList}\item 
+\Hypertarget{class_motor_a0d77684c153e65eec766132693f7f805}\label{class_motor_a0d77684c153e65eec766132693f7f805} 
+void {\bfseries current\+\_\+inner\+\_\+loop} (float I\+\_\+\+LOAD, float V\+\_\+\+BUS)
+\begin{DoxyCompactList}\small\item\em innermost control loop \end{DoxyCompactList}\item 
+\Hypertarget{class_motor_a068333e2c805eb597795a1b5322db942}\label{class_motor_a068333e2c805eb597795a1b5322db942} 
+bool {\bfseries error\+\_\+check} ()
+\item 
+\Hypertarget{class_motor_ac3c4676d14d62ab6f111301ad50e9370}\label{class_motor_ac3c4676d14d62ab6f111301ad50e9370} 
+bool {\bfseries update\+\_\+gain} (float BW)
+\item 
+\Hypertarget{class_motor_ab29ef3fde71dc740475decc5eb126ec9}\label{class_motor_ab29ef3fde71dc740475decc5eb126ec9} 
+bool {\bfseries arm} ()
+\item 
+\Hypertarget{class_motor_ae76c223adb02f1f0ac8f437d0f9f73a9}\label{class_motor_ae76c223adb02f1f0ac8f437d0f9f73a9} 
+void {\bfseries disarm} ()
+\item 
+\Hypertarget{class_motor_a7679e50158fe5d0bab6567a379630c25}\label{class_motor_a7679e50158fe5d0bab6567a379630c25} 
+const config\+\_\+m \& {\bfseries get\+\_\+config} () const
+\item 
+\Hypertarget{class_motor_a72498f95f585776d5f123ad3d5b0179c}\label{class_motor_a72498f95f585776d5f123ad3d5b0179c} 
+void {\bfseries set\+\_\+config} (const \doxymbox{\hyperlink{struct_motor_1_1config__mot}{config\+\_\+mot}} \&config\+\_\+load)
+\item 
+\Hypertarget{class_motor_a40617fd45d99b8c13dae590c26e1488e}\label{class_motor_a40617fd45d99b8c13dae590c26e1488e} 
+Motor\+\_\+mode {\bfseries get\+\_\+mode} () const
+\item 
+\Hypertarget{class_motor_a1c3b21891c7fcebf95f0dce00c7bbf93}\label{class_motor_a1c3b21891c7fcebf95f0dce00c7bbf93} 
+Motor\+\_\+\+Error {\bfseries get\+\_\+error} ()
+\item 
+\Hypertarget{class_motor_a6fd955f2aa0660932e03dda7f4740388}\label{class_motor_a6fd955f2aa0660932e03dda7f4740388} 
+bool {\bfseries get\+\_\+nfault} ()
+\item 
+\Hypertarget{class_motor_ab5d2a65cfa846853299c7a7a1af9c95c}\label{class_motor_ab5d2a65cfa846853299c7a7a1af9c95c} 
+bool {\bfseries read\+\_\+nfault} ()
+\item 
+\Hypertarget{class_motor_a917aee9ef9e34b4a448703f4eabeb4d9}\label{class_motor_a917aee9ef9e34b4a448703f4eabeb4d9} 
+void {\bfseries current\+\_\+temperature\+\_\+limit} (float scale)
+\item 
+\Hypertarget{class_motor_a5f290694a937e744b27d231e16674966}\label{class_motor_a5f290694a937e744b27d231e16674966} 
+bool {\bfseries init} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_motor_ac7c4aefbb84709276f40d59f9b13d656}\label{class_motor_ac7c4aefbb84709276f40d59f9b13d656} 
+Motor\+\_\+mode {\bfseries Mode} = MOTOR\+\_\+\+IDLE
+\item 
+\Hypertarget{class_motor_a91292ab56ab844a71be63aff60ddfd95}\label{class_motor_a91292ab56ab844a71be63aff60ddfd95} 
+bool {\bfseries isarmed\_}
+\item 
+\Hypertarget{class_motor_ad1d12ab5563749c5015e51b29b988d02}\label{class_motor_ad1d12ab5563749c5015e51b29b988d02} 
+float {\bfseries duty\+\_\+steppoint} = 0.\+0f
+\item 
+\Hypertarget{class_motor_a3c96ac81a08d3f5f4ae25485944ec821}\label{class_motor_a3c96ac81a08d3f5f4ae25485944ec821} 
+float {\bfseries true\+\_\+torque\+\_\+limit}
+\end{DoxyCompactItemize}
+
+
+\label{class_motor_doc-func-members}
+\Hypertarget{class_motor_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_motor_aa3587f1672346fa8a845b3e62da0c25f}\index{Motor@{Motor}!current\_target@{current\_target}}
+\index{current\_target@{current\_target}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{current\_target()}{current\_target()}}
+{\footnotesize\ttfamily \label{class_motor_aa3587f1672346fa8a845b3e62da0c25f} 
+void Motor::\+current\+\_\+target (\begin{DoxyParamCaption}\item[{float}]{torque}{, }\item[{float}]{timestep}{}\end{DoxyParamCaption})}
+
+
+
+torque to current convertion used to determine the target current for the motor 
+
+
+\begin{DoxyParams}{Parameters}
+{\em torque} & calculation result from the controller \\
+\hline
+{\em timestep} & calculating maximum changes of torque target\\
+\hline
+\end{DoxyParams}
+the current target can only change based on the achievable changes within the specified timestep it also includes a feedforward component based on the motor resistance, current vel and the torque constant \Hypertarget{class_motor_af2bcae5f3d72a3a7cff006b3db0e6c12}\index{Motor@{Motor}!Is\_calibrated@{Is\_calibrated}}
+\index{Is\_calibrated@{Is\_calibrated}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{Is\_calibrated()}{Is\_calibrated()}}
+{\footnotesize\ttfamily \label{class_motor_af2bcae5f3d72a3a7cff006b3db0e6c12} 
+bool Motor::\+\+Is\+\_\+calibrated (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+checking motor config values to determine whether or not the calibration sequence is finished 
+
+\begin{DoxyReturn}{Returns}
+true if resistance and inductance is defined 
+\end{DoxyReturn}
+\Hypertarget{class_motor_ae1cdbc2c03e4d19bdca31364ce994556}\index{Motor@{Motor}!set\_duty\_target@{set\_duty\_target}}
+\index{set\_duty\_target@{set\_duty\_target}!Motor@{Motor}}
+\doxysubsubsection{\texorpdfstring{set\_duty\_target()}{set\_duty\_target()}}
+{\footnotesize\ttfamily \label{class_motor_ae1cdbc2c03e4d19bdca31364ce994556} 
+void Motor::\+set\+\_\+duty\+\_\+target (\begin{DoxyParamCaption}\item[{float}]{duty}{}\end{DoxyParamCaption})}
+
+
+
+public function to change the desired duty cyccle for open loop controller 
+
+
+\begin{DoxyParams}{Parameters}
+{\em duty} & cycle in \+[0 \texorpdfstring{$\sim$}{\string~} 1] \\
+\hline
+\end{DoxyParams}
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+Inc/motor.\+hpp\item 
+Src/motor.\+cpp\end{DoxyCompactItemize}
