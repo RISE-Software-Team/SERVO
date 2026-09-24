@@ -1,0 +1,19 @@
+var searchData=
+[
+  ['config_5fadc_0',['config_adc',['../struct_a_d_c_1_1config__adc.html',1,'ADC']]],
+  ['config_5faxis_1',['config_axis',['../structconfig__axis.html',1,'']]],
+  ['config_5fcontrol_2',['config_control',['../struct_controller_1_1config__control.html',1,'Controller']]],
+  ['config_5fenc_3',['config_enc',['../struct_encoder_1_1config__enc.html',1,'Encoder']]],
+  ['config_5fmot_4',['config_mot',['../struct_motor_1_1config__mot.html',1,'Motor']]],
+  ['control_5ferror_5',['Control_Error',['../class_controller.html#a44fa6a9048bd9507ddbe269df516e21c',1,'Controller']]],
+  ['control_5fmode_6',['Control_Mode',['../class_controller.html#a8f00885ed00c26485a1c726fafdc23b1',1,'Controller']]],
+  ['control_5fposition_7',['CONTROL_POSITION',['../class_controller.html#a8f00885ed00c26485a1c726fafdc23b1ae597a49eb9429220ba5f1219ea597d85',1,'Controller']]],
+  ['control_5ftorque_8',['CONTROL_TORQUE',['../class_controller.html#a8f00885ed00c26485a1c726fafdc23b1a5171cce208acecc48612d83afcd9d1ad',1,'Controller']]],
+  ['control_5fvelocity_9',['CONTROL_VELOCITY',['../class_controller.html#a8f00885ed00c26485a1c726fafdc23b1acbd20d5c7bebde8ddd1a5eb2fed27423',1,'Controller']]],
+  ['controller_10',['Controller',['../class_controller.html',1,'']]],
+  ['count_5ftrue_11',['count_true',['../struct_encoder_1_1_encoder___state.html#afff78b83cf394a4d328d7bbb9d5fd34a',1,'Encoder::Encoder_State']]],
+  ['count_5fwrap_12',['count_wrap',['../struct_encoder_1_1_encoder___state.html#abb65e798f098b23ac47ffcf84242e15a',1,'Encoder::Encoder_State']]],
+  ['cpr_13',['cpr',['../struct_encoder_1_1config__enc.html#a26e0c382b285d8b4c5a5272f51bc7876',1,'Encoder::config_enc']]],
+  ['current_5finner_5floop_14',['current_inner_loop',['../class_motor.html#a0d77684c153e65eec766132693f7f805',1,'Motor']]],
+  ['current_5ftarget_15',['current_target',['../class_motor.html#aa3587f1672346fa8a845b3e62da0c25f',1,'Motor']]]
+];

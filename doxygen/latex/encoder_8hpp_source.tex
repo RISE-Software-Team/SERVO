@@ -1,0 +1,84 @@
+\doxysection{encoder.\+hpp}
+\hypertarget{encoder_8hpp_source}{}\label{encoder_8hpp_source}\index{Inc/encoder.hpp@{Inc/encoder.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#pragma\ once}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#include\ <stdint.h>}}
+\DoxyCodeLine{00003\ \textcolor{preprocessor}{\#include\ "{}stm32l5xx\_hal.h"{}}}
+\DoxyCodeLine{00004\ }
+\DoxyCodeLine{00005\ \textcolor{comment}{//\ External\ variable\ SPI\ connection}}
+\DoxyCodeLine{00006\ \textcolor{keyword}{extern}\ SPI\_HandleTypeDef\ hspi1;}
+\DoxyCodeLine{00007\ }
+\DoxyCodeLine{00008\ }
+\DoxyCodeLine{00009\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_encoder}{Encoder}}\{}
+\DoxyCodeLine{00010\ }
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00013\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{struct_encoder_1_1config__enc}{config\_enc}}\{}
+\DoxyCodeLine{00014\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{struct_encoder_1_1config__enc_a26e0c382b285d8b4c5a5272f51bc7876}{cpr}}\ =\ 16384;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00015\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{struct_encoder_1_1config__enc_ac99c5168e80630f6b9a9e9b42d1d81ac}{direction}}\ =\ 0;\ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00016\ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00017\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_encoder_1_1config__enc_a4f218731d1d2edfa6c686019eb8a34b4}{observer\_alpha}}\ =\ 0.0f;\ \ \ \ \ \ \ }
+\DoxyCodeLine{00018\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_encoder_1_1config__enc_a53ab710b1239b84e0d884ee5c9ce0624}{observer\_beta}}\ \ =\ 0.0f;\ \ \ \ \ \ \ }
+\DoxyCodeLine{00019\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ bandwidth\ \ \ \ \ \ =\ 1.0f;}
+\DoxyCodeLine{00020\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00021\ }
+\DoxyCodeLine{00022\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Encoder\ module\ state}}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{struct_encoder_1_1_encoder___state}{Encoder\_State}}\{}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \ \ \ \ uint32\_t\ \doxymbox{\hyperlink{struct_encoder_1_1_encoder___state_acd1b7a6d48cef03212b526a790221169}{shadow\_count}};\ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{struct_encoder_1_1_encoder___state_afff78b83cf394a4d328d7bbb9d5fd34a}{count\_true}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ \doxymbox{\hyperlink{struct_encoder_1_1_encoder___state_abb65e798f098b23ac47ffcf84242e15a}{count\_wrap}};\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_encoder_1_1_encoder___state_ad1faa5341a125cebe0484d4d36048a42}{pos\_estimate}}\ =\ 0.0f;\ \ \ \ \ \ }
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_encoder_1_1_encoder___state_ae1d83ddd4b3386b29422ceafde7cf54c}{vel\_estimate}}\ =\ 0.0f;\ \ \ \ \ \ }
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{struct_encoder_1_1_encoder___state_a2bb7aea5939858c641b18406cea31ca1}{pos\_cwrap}}\ =\ 0.0f;\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00031\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum}\ \doxymbox{\hyperlink{class_encoder_a3522f42ecb6d669de1128b40d27e8806}{Encoder\_Error}}\ :\ uint32\_t\{}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_NONE\ =\ 0,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_SPI\_PARITY\ =\ 1U\ <<\ 1,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_INVALID\_DIRECTION\ =\ 1U\ <<\ 2,}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_encoder_a9b6aba5ca0a6c38ea3f1974b50e32348}{data\_ready}};}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ uint8\_t\ SPI\_raw;}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ \doxymbox{\hyperlink{class_encoder_a8bce244b718daafd019a803df90aaec3}{frequency}}\ =\ 20000.0f;}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ dt\ =\ 1.0f/20000.0f;}
+\DoxyCodeLine{00046\ }
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_encoder_a034f032c1ba36465c408977c5f169c30}{init}}();}
+\DoxyCodeLine{00051\ }
+\DoxyCodeLine{00053\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_encoder_a43375612cc8b8ef91d89cfeade1a5da8}{set\_config}}(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{struct_encoder_1_1config__enc}{config\_enc}}\&\ config\_load);}
+\DoxyCodeLine{00054\ }
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_encoder_a8a3a023e8711803bb96d1b121e6d4061}{update\_observer\_gain}}(\textcolor{keywordtype}{float}\ BW);}
+\DoxyCodeLine{00060\ }
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_encoder_aad8920086fa5db993c9da5d62de5d9bb}{enc\_direction}}(\textcolor{keywordtype}{int}\ delta\_count);}
+\DoxyCodeLine{00066\ }
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_encoder_a0595995a195ef2a28680c40c0cd58922}{enc\_Update}}();}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_encoder_a87c1db718d227ef5fecf82df62915af2}{enc\_spi\_start}}();}
+\DoxyCodeLine{00079\ }
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_encoder_a866ed3354f3ee5ca4a38a5bb242d5246}{enc\_spi\_finish}}();}
+\DoxyCodeLine{00086\ }
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ functions\ used\ to\ extract\ class\ private\ variables}}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ \doxymbox{\hyperlink{struct_encoder_1_1_encoder___state}{Encoder\_State}}\&\ get()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ enc\_state;\};}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ config\_enc\&\ get\_config()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ cfg\_;\ \};}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_encoder_a3522f42ecb6d669de1128b40d27e8806}{Encoder\_Error}}\ get\_error()\ \{\textcolor{keywordflow}{return}\ error\_;\};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Encoder\ private\ configurations}}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{class_encoder_a3522f42ecb6d669de1128b40d27e8806}{Encoder\_Error}}\ error\_\ =\ ERROR\_NONE;}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_encoder_1_1config__enc}{config\_enc}}\ cfg\_;}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ uint16\_t\ enc\_tx\ =\ \{0xFFFF\};\ \textcolor{comment}{//\ 0x3FFF\ adress\ +\ read\ +\ parity}}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ uint16\_t\ enc\_rx;}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_encoder_1_1_encoder___state}{Encoder\_State}}\ enc\_state;}
+\DoxyCodeLine{00099\ }
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Encoder\ temporary\ state}}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ pos\_estimate\_counts;}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ pos\_estimate\_countwrap;}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ vel\_estimate\_counts;}
+\DoxyCodeLine{00104\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Variable\ used\ to\ keep\ count\ on\ missing\ time\ cycles}}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{int}\ missing\_update;}
+\DoxyCodeLine{00107\ \};}
+
+\end{DoxyCode}

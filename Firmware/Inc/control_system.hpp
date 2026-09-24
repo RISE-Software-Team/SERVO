@@ -20,14 +20,14 @@ TODO:
 class Controller{
 
     public:
-        // Controller modes
+        /// Controller modes
         enum Control_Mode{
-            CONTROL_TORQUE,     // Torque control using inner current loop
-            CONTROL_VELOCITY,   // Velocity controller
-            CONTROL_POSITION,   // Position controller
+            CONTROL_TORQUE,     ///< Torque control using inner current loop.
+            CONTROL_VELOCITY,   ///< Velocity control.
+            CONTROL_POSITION,   ///< Position control.
         };
 
-        // Controller Error classification
+        /// Controller Error classification
         enum Control_Error : uint32_t{
             ERROR_NONE = 0,
             ERROR_INVALID_GAIN      = 1U << 1,
@@ -35,32 +35,30 @@ class Controller{
             ERROR_REPLANNING        = 1U << 3,
         };
 
-        // Controller class configuration
+        /// Controller class configuration
         struct config_control{
-            float pos_KP = 0.0f;
+            float pos_KP = 0.0f;               ///< Position proportional gain.
 
-            float vel_KP = 0.0f;
-            float vel_KI = 0.0f;
+            float vel_KP = 0.0f;               ///< Velocity proportional gain.
+            float vel_KI = 0.0f;               ///< Velocity integral gain.
 
-            float integrator_limit = 0.0f;      // Velocity Integrator limit
-            float velocity_limit = 0.0f;        // basically Vmax ?
-            float torque_limit = 0.0f;
-            float velocity_threshold = 0.0f;    // Velocity threshold for replanning
-            float bandwidth = 0.0f;             // System bandwidth
-            float max_bandwidth = 0.0f;
-            float inertia = 0.0f;               // Motor Inertia [DATASHEET]
+            float integrator_limit = 0.0f;     ///< Velocity integrator limit.
+            float velocity_limit = 0.0f;       ///< Maximum velocity [rad/s].
+            float torque_limit = 0.0f;         ///< Maximum torque [Nm].
+            float velocity_threshold = 0.0f;   ///< Replanning threshold [rad/s].
+            float bandwidth = 0.0f;            ///< Desired bandwidth [Hz].
+            float max_bandwidth = 0.0f;        ///< Maximum permitted bandwidth [Hz].
+            float inertia = 0.0f;              ///< System inertia.
         };
 
-        // Trajectory planning output component
+        /// Trajectory planning output component
         struct Trapezoid_component{
-            float pos;
-            float vel;
-            float acc;
+            float pos;      ///< Position [rad]
+            float vel;      ///< Velocity [rad/s]
+            float acc;      ///< Acceleration [rad/s^2]
         };
 
-        /**
-          * @brief
-        **/
+        /// Initializes controller runtime state.
         bool init();
 
         /**
@@ -69,7 +67,7 @@ class Controller{
         **/
         void update(float timestep);
 
-        //customize the controller gain from the desired bandwidth
+        /** @brief customize the controller gain from the desired bandwidth **/
         void update_gain(float BW);
 
         /**
@@ -78,16 +76,34 @@ class Controller{
         **/
         void set_mode (Control_Mode mode);
 
-        // functions to update controller setpoints
+        /**
+        * @brief Sets the position target.
+        * @param p_target Position target [rad].
+        * @return true if the target is accepted.
+        */
         bool target_pos(float p_target);
+
+        /**
+        * @brief Sets the velocity target.
+        * @param v_target Velocity target [rad/s].
+        * @return true if the target is accepted.
+        */
         bool target_vel(float v_target);
+
+        /**
+        * @brief Sets the torque target.
+        * @param t_target Torque target [Nm].
+        * @return true if the target is accepted.
+        */
         bool target_torque(float t_target);
 
-        // funtions used to extract controller private variables
-        Control_Error get_errror() {return error_;};
-        config_control& get_config() {return cfg_;};
+        /// Returns the current controller error flags.
+        Control_Error get_error() const { return error_; }
 
-        // Upload config from FLASH
+        /// Returns the active controller configuration.
+        config_control& get_config() { return cfg_; }
+
+        /// Loads controller configuration.
         void set_config(const config_control& config_load);
 
         /**
@@ -96,13 +112,11 @@ class Controller{
         **/
         void torque_temperature_limit(float scale);
 
-        // controller target variables
         float pos_target;
         float vel_target;
         float torque_target;
         int direction; 
 
-        // Controller output
         float torque_setpoint;
 
 

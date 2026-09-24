@@ -1,0 +1,262 @@
+\doxysection{Controller Class Reference}
+\hypertarget{class_controller}{}\label{class_controller}\index{Controller@{Controller}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \doxymbox{\hyperlink{struct_controller_1_1config__control}{config\+\_\+control}}
+\begin{DoxyCompactList}\small\item\em \doxylink{class_controller}{Controller} class configuration. \end{DoxyCompactList}\item 
+struct \doxymbox{\hyperlink{struct_controller_1_1_trapezoid__component}{Trapezoid\+\_\+component}}
+\begin{DoxyCompactList}\small\item\em Trajectory planning output component. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+enum \doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1}{Control\+\_\+\+Mode}} \{ \doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1a5171cce208acecc48612d83afcd9d1ad}{CONTROL\+\_\+\+TORQUE}}
+, \doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1acbd20d5c7bebde8ddd1a5eb2fed27423}{CONTROL\+\_\+\+VELOCITY}}
+, \doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1ae597a49eb9429220ba5f1219ea597d85}{CONTROL\+\_\+\+POSITION}}
+ \}
+\begin{DoxyCompactList}\small\item\em \doxylink{class_controller}{Controller} modes. \end{DoxyCompactList}\item 
+\Hypertarget{class_controller_a44fa6a9048bd9507ddbe269df516e21c}\label{class_controller_a44fa6a9048bd9507ddbe269df516e21c} 
+enum \doxymbox{\hyperlink{class_controller_a44fa6a9048bd9507ddbe269df516e21c}{Control\+\_\+\+Error}} : uint32\+\_\+t \{ {\bfseries ERROR\+\_\+\+NONE} = 0
+, {\bfseries ERROR\+\_\+\+INVALID\+\_\+\+GAIN} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 1
+, {\bfseries ERROR\+\_\+\+INVALID\+\_\+\+TARGET} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 2
+, {\bfseries ERROR\+\_\+\+REPLANNING} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 3
+ \}
+\begin{DoxyCompactList}\small\item\em \doxylink{class_controller}{Controller} Error classification. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \doxymbox{\hyperlink{class_controller_afbeae1ad3a4c472280e4d3423846559d}{init}} ()
+\begin{DoxyCompactList}\small\item\em Initializes controller runtime state. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_controller_ae601bc0f8ac648387518c4f3672b46e0}{update}} (float timestep)
+\begin{DoxyCompactList}\small\item\em main update sequence to calculate the torque setpoint based on the previously planned trajectory \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_controller_abccf398c7ae67355fa973ff01c346c1c}{update\+\_\+gain}} (float BW)
+\begin{DoxyCompactList}\small\item\em customize the controller gain from the desired bandwidth \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_controller_a5cfd7a1239cd66f7f35acfce7e30374b}{set\+\_\+mode}} (\doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1}{Control\+\_\+\+Mode}} mode)
+\begin{DoxyCompactList}\small\item\em customize the controller operating mode \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{class_controller_a3dab4e8b396fbaf4d6f952e65922abc2}{target\+\_\+pos}} (float p\+\_\+target)
+\begin{DoxyCompactList}\small\item\em Sets the position target. \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{class_controller_a3add81ddbb0ddbb25a7ae4a217c82628}{target\+\_\+vel}} (float v\+\_\+target)
+\begin{DoxyCompactList}\small\item\em Sets the velocity target. \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{class_controller_ae5ec3b0883a5f5c9b2458dae68588633}{target\+\_\+torque}} (float t\+\_\+target)
+\begin{DoxyCompactList}\small\item\em Sets the torque target. \end{DoxyCompactList}\item 
+\Hypertarget{class_controller_a4a484d26faab3c4ebbe4bb5640c9ecd0}\label{class_controller_a4a484d26faab3c4ebbe4bb5640c9ecd0} 
+\doxymbox{\hyperlink{class_controller_a44fa6a9048bd9507ddbe269df516e21c}{Control\+\_\+\+Error}} {\bfseries get\+\_\+error} () const
+\begin{DoxyCompactList}\small\item\em Returns the current controller error flags. \end{DoxyCompactList}\item 
+\Hypertarget{class_controller_ae7c1ca77576c44be064e544564c7751d}\label{class_controller_ae7c1ca77576c44be064e544564c7751d} 
+\doxymbox{\hyperlink{struct_controller_1_1config__control}{config\+\_\+control}} \& {\bfseries get\+\_\+config} ()
+\begin{DoxyCompactList}\small\item\em Returns the active controller configuration. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_controller_abc0e0cf03ed7114d175a667036aaffe2}{set\+\_\+config}} (const \doxymbox{\hyperlink{struct_controller_1_1config__control}{config\+\_\+control}} \&config\+\_\+load)
+\begin{DoxyCompactList}\small\item\em Loads controller configuration. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_controller_acb6ac3051db68dcb1d0a7cdf31c517d5}{torque\+\_\+temperature\+\_\+limit}} (float scale)
+\begin{DoxyCompactList}\small\item\em torque limiter in the case of exceeding (or increasing) temperature \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_controller_a619fe60f5d9aece8120c8235d0303560}\label{class_controller_a619fe60f5d9aece8120c8235d0303560} 
+float {\bfseries pos\+\_\+target}
+\item 
+\Hypertarget{class_controller_a2170b415070eb31ace5218dd15375f70}\label{class_controller_a2170b415070eb31ace5218dd15375f70} 
+float {\bfseries vel\+\_\+target}
+\item 
+\Hypertarget{class_controller_a39bacc58989b4e4aa6ac66bd6879be12}\label{class_controller_a39bacc58989b4e4aa6ac66bd6879be12} 
+float {\bfseries torque\+\_\+target}
+\item 
+\Hypertarget{class_controller_a0c0421e632da4b88e147ccabf80facd5}\label{class_controller_a0c0421e632da4b88e147ccabf80facd5} 
+int {\bfseries direction}
+\item 
+\Hypertarget{class_controller_a9fe5f7c24fa92af0ee327335b2f25b14}\label{class_controller_a9fe5f7c24fa92af0ee327335b2f25b14} 
+float {\bfseries torque\+\_\+setpoint}
+\end{DoxyCompactItemize}
+
+
+\label{class_controller_doc-enum-members}
+\Hypertarget{class_controller_doc-enum-members}
+\doxysubsection{Member Enumeration Documentation}
+\Hypertarget{class_controller_a8f00885ed00c26485a1c726fafdc23b1}\index{Controller@{Controller}!Control\_Mode@{Control\_Mode}}
+\index{Control\_Mode@{Control\_Mode}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{Control\_Mode}{Control\_Mode}}
+{\footnotesize\ttfamily \label{class_controller_a8f00885ed00c26485a1c726fafdc23b1} 
+enum \doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1}{Controller::\+\+Control\+\_\+\+Mode}}}
+
+
+
+\doxylink{class_controller}{Controller} modes. 
+
+\begin{DoxyEnumFields}[2]{Enumerator}
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CONTROL\_TORQUE@{CONTROL\_TORQUE}!Controller@{Controller}}
+\index{Controller@{Controller}!CONTROL\_TORQUE@{CONTROL\_TORQUE}}
+}\Hypertarget{class_controller_a8f00885ed00c26485a1c726fafdc23b1a5171cce208acecc48612d83afcd9d1ad}\label{class_controller_a8f00885ed00c26485a1c726fafdc23b1a5171cce208acecc48612d83afcd9d1ad} 
+CONTROL\+\_\+\+TORQUE&Torque control using inner current loop. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CONTROL\_VELOCITY@{CONTROL\_VELOCITY}!Controller@{Controller}}
+\index{Controller@{Controller}!CONTROL\_VELOCITY@{CONTROL\_VELOCITY}}
+}\Hypertarget{class_controller_a8f00885ed00c26485a1c726fafdc23b1acbd20d5c7bebde8ddd1a5eb2fed27423}\label{class_controller_a8f00885ed00c26485a1c726fafdc23b1acbd20d5c7bebde8ddd1a5eb2fed27423} 
+CONTROL\+\_\+\+VELOCITY&Velocity control. \\
+\hline
+
+\raisebox{\heightof{T}}[0pt][0pt]{\index{CONTROL\_POSITION@{CONTROL\_POSITION}!Controller@{Controller}}
+\index{Controller@{Controller}!CONTROL\_POSITION@{CONTROL\_POSITION}}
+}\Hypertarget{class_controller_a8f00885ed00c26485a1c726fafdc23b1ae597a49eb9429220ba5f1219ea597d85}\label{class_controller_a8f00885ed00c26485a1c726fafdc23b1ae597a49eb9429220ba5f1219ea597d85} 
+CONTROL\+\_\+\+POSITION&Position control. \\
+\hline
+
+\end{DoxyEnumFields}
+
+
+\label{class_controller_doc-func-members}
+\Hypertarget{class_controller_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_controller_afbeae1ad3a4c472280e4d3423846559d}\index{Controller@{Controller}!init@{init}}
+\index{init@{init}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily \label{class_controller_afbeae1ad3a4c472280e4d3423846559d} 
+bool Controller::\+init (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Initializes controller runtime state. 
+
+Here is the call graph for this function:
+% FIG 0
+\Hypertarget{class_controller_abc0e0cf03ed7114d175a667036aaffe2}\index{Controller@{Controller}!set\_config@{set\_config}}
+\index{set\_config@{set\_config}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{set\_config()}{set\_config()}}
+{\footnotesize\ttfamily \label{class_controller_abc0e0cf03ed7114d175a667036aaffe2} 
+void Controller::\+set\+\_\+config (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{struct_controller_1_1config__control}{config\+\_\+control}} \&}]{config\+\_\+load}{}\end{DoxyParamCaption})}
+
+
+
+Loads controller configuration. 
+
+Here is the call graph for this function:
+% FIG 1
+\Hypertarget{class_controller_a5cfd7a1239cd66f7f35acfce7e30374b}\index{Controller@{Controller}!set\_mode@{set\_mode}}
+\index{set\_mode@{set\_mode}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{set\_mode()}{set\_mode()}}
+{\footnotesize\ttfamily \label{class_controller_a5cfd7a1239cd66f7f35acfce7e30374b} 
+void Controller::\+set\+\_\+mode (\begin{DoxyParamCaption}\item[{\doxymbox{\hyperlink{class_controller_a8f00885ed00c26485a1c726fafdc23b1}{Control\+\_\+\+Mode}}}]{mode}{}\end{DoxyParamCaption})}
+
+
+
+customize the controller operating mode 
+
+
+\begin{DoxyParams}{Parameters}
+{\em mode} & choose between position, velocity, and torque \\
+\hline
+\end{DoxyParams}
+Here is the caller graph for this function:
+% FIG 2
+\Hypertarget{class_controller_a3dab4e8b396fbaf4d6f952e65922abc2}\index{Controller@{Controller}!target\_pos@{target\_pos}}
+\index{target\_pos@{target\_pos}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{target\_pos()}{target\_pos()}}
+{\footnotesize\ttfamily \label{class_controller_a3dab4e8b396fbaf4d6f952e65922abc2} 
+bool Controller::\+target\+\_\+pos (\begin{DoxyParamCaption}\item[{float}]{p\+\_\+target}{}\end{DoxyParamCaption})}
+
+
+
+Sets the position target. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+target} & Position target \+[rad]. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the target is accepted. 
+\end{DoxyReturn}
+Here is the caller graph for this function:
+% FIG 3
+\Hypertarget{class_controller_ae5ec3b0883a5f5c9b2458dae68588633}\index{Controller@{Controller}!target\_torque@{target\_torque}}
+\index{target\_torque@{target\_torque}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{target\_torque()}{target\_torque()}}
+{\footnotesize\ttfamily \label{class_controller_ae5ec3b0883a5f5c9b2458dae68588633} 
+bool Controller::\+target\+\_\+torque (\begin{DoxyParamCaption}\item[{float}]{t\+\_\+target}{}\end{DoxyParamCaption})}
+
+
+
+Sets the torque target. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+target} & Torque target \+[Nm]. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the target is accepted. 
+\end{DoxyReturn}
+Here is the caller graph for this function:
+% FIG 4
+\Hypertarget{class_controller_a3add81ddbb0ddbb25a7ae4a217c82628}\index{Controller@{Controller}!target\_vel@{target\_vel}}
+\index{target\_vel@{target\_vel}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{target\_vel()}{target\_vel()}}
+{\footnotesize\ttfamily \label{class_controller_a3add81ddbb0ddbb25a7ae4a217c82628} 
+bool Controller::\+target\+\_\+vel (\begin{DoxyParamCaption}\item[{float}]{v\+\_\+target}{}\end{DoxyParamCaption})}
+
+
+
+Sets the velocity target. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v\+\_\+target} & Velocity target \+[rad/\+s]. \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if the target is accepted. 
+\end{DoxyReturn}
+Here is the caller graph for this function:
+% FIG 5
+\Hypertarget{class_controller_acb6ac3051db68dcb1d0a7cdf31c517d5}\index{Controller@{Controller}!torque\_temperature\_limit@{torque\_temperature\_limit}}
+\index{torque\_temperature\_limit@{torque\_temperature\_limit}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{torque\_temperature\_limit()}{torque\_temperature\_limit()}}
+{\footnotesize\ttfamily \label{class_controller_acb6ac3051db68dcb1d0a7cdf31c517d5} 
+void Controller::\+torque\+\_\+temperature\+\_\+limit (\begin{DoxyParamCaption}\item[{float}]{scale}{}\end{DoxyParamCaption})}
+
+
+
+torque limiter in the case of exceeding (or increasing) temperature 
+
+
+\begin{DoxyParams}{Parameters}
+{\em scale} & is used to ramp down the torque limit if the temperature still increasing \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_controller_ae601bc0f8ac648387518c4f3672b46e0}\index{Controller@{Controller}!update@{update}}
+\index{update@{update}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{update()}{update()}}
+{\footnotesize\ttfamily \label{class_controller_ae601bc0f8ac648387518c4f3672b46e0} 
+void Controller::\+update (\begin{DoxyParamCaption}\item[{float}]{timestep}{}\end{DoxyParamCaption})}
+
+
+
+main update sequence to calculate the torque setpoint based on the previously planned trajectory 
+
+
+\begin{DoxyParams}{Parameters}
+{\em timestep} & based on the PWM frequency clock \\
+\hline
+\end{DoxyParams}
+Here is the call graph for this function:
+% FIG 6
+Here is the caller graph for this function:
+% FIG 7
+\Hypertarget{class_controller_abccf398c7ae67355fa973ff01c346c1c}\index{Controller@{Controller}!update\_gain@{update\_gain}}
+\index{update\_gain@{update\_gain}!Controller@{Controller}}
+\doxysubsubsection{\texorpdfstring{update\_gain()}{update\_gain()}}
+{\footnotesize\ttfamily \label{class_controller_abccf398c7ae67355fa973ff01c346c1c} 
+void Controller::\+update\+\_\+gain (\begin{DoxyParamCaption}\item[{float}]{BW}{}\end{DoxyParamCaption})}
+
+
+
+customize the controller gain from the desired bandwidth 
+
+Here is the caller graph for this function:
+% FIG 8
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+Inc/control\+\_\+system.\+hpp\item 
+Src/control\+\_\+system.\+cpp\end{DoxyCompactItemize}

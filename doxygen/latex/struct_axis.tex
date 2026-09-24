@@ -1,0 +1,210 @@
+\doxysection{Axis Struct Reference}
+\hypertarget{struct_axis}{}\label{struct_axis}\index{Axis@{Axis}}
+
+
+Main top level controller for the servo axis.  
+
+
+
+
+{\ttfamily \+\#include $<$axis.\+hpp$>$}
+
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_axis_ac92f24ac72a5c500849d80887d91998a}\label{struct_axis_ac92f24ac72a5c500849d80887d91998a} 
+enum class {\bfseries Axis\+\_\+\+States} \{ \newline
+{\bfseries UNINITIALIZED}
+, {\bfseries SETUP}
+, {\bfseries IDLE}
+, {\bfseries CALIBRATING}
+, \newline
+{\bfseries CLOSED\+\_\+\+LOOP}
+, {\bfseries AXIS\+\_\+\+ERROR}
+ \}
+\item 
+\Hypertarget{struct_axis_a0c84ba97317ef2a9c19e4c28671443bf}\label{struct_axis_a0c84ba97317ef2a9c19e4c28671443bf} 
+enum {\bfseries Axis\+\_\+\+Error} : uint32\+\_\+t \{ \newline
+{\bfseries ERROR\+\_\+\+NONE} = 0
+, {\bfseries ERROR\+\_\+\+ADC} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 1
+, {\bfseries ERROR\+\_\+\+ENCODER} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 2
+, {\bfseries ERROR\+\_\+\+MOTOR} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 3
+, \newline
+{\bfseries ERROR\+\_\+\+CONTROLLER} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 4
+ \}
+\item 
+\Hypertarget{struct_axis_a248a39317f9ce43181d383523bda59e9}\label{struct_axis_a248a39317f9ce43181d383523bda59e9} 
+enum {\bfseries calibration} \{ \newline
+{\bfseries RESISTANCE}
+, {\bfseries INDUCTANCE}
+, {\bfseries DIRECTION}
+, {\bfseries FINISH}
+, \newline
+{\bfseries ERROR}
+ \}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+bool \doxymbox{\hyperlink{struct_axis_a43fcae1d66d46ae9d035ec3fdc696892}{init}} ()
+\begin{DoxyCompactList}\small\item\em Initialize axis modules. \end{DoxyCompactList}\item 
+\Hypertarget{struct_axis_a7ea6fd3ffe0562c50ad26074380667f8}\label{struct_axis_a7ea6fd3ffe0562c50ad26074380667f8} 
+void {\bfseries update} ()
+\item 
+\Hypertarget{struct_axis_abbb9f3df6154f406b7ee6d96a5f3f224}\label{struct_axis_abbb9f3df6154f406b7ee6d96a5f3f224} 
+void {\bfseries set\+\_\+calibration} (calibration set\+\_\+calibration)
+\begin{DoxyCompactList}\small\item\em change and execute the initial condition for the desired calibration sequence \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{struct_axis_a1fa66674572d3eedf99d43bc05e5eac2}{set\+\_\+state}} (Axis\+\_\+\+States states)
+\begin{DoxyCompactList}\small\item\em change and execute the initial conditions for the desired axis state \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{struct_axis_a69fe82acc364ad17fbec4ee61a9b5123}{set\+\_\+position}} (float p\+\_\+target)
+\begin{DoxyCompactList}\small\item\em user interaction to set the position target \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{struct_axis_a8b0b004b24a50d89f93d1f95faafc082}{set\+\_\+velocity}} (float v\+\_\+target)
+\begin{DoxyCompactList}\small\item\em user interaction to set the velocity target \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{struct_axis_a453817b3cbf2d1a874a227c5c5fb34ec}{set\+\_\+torque}} (float t\+\_\+target)
+\begin{DoxyCompactList}\small\item\em user interaction to set the torque target \end{DoxyCompactList}\item 
+float \doxymbox{\hyperlink{struct_axis_adc6d5e3ebaa39a3984b0b4aa97af92e7}{motor\+\_\+current}} ()
+\begin{DoxyCompactList}\small\item\em get current value and direction \end{DoxyCompactList}\item 
+bool \doxymbox{\hyperlink{struct_axis_a0a1d1abb6b162d4847554f5035c0cedb}{save\+\_\+config}} ()
+\begin{DoxyCompactList}\small\item\em save the axis and the other modules configuration \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Static Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{struct_axis_a92a85436412e199f4622b488ea611079}\label{struct_axis_a92a85436412e199f4622b488ea611079} 
+static constexpr float {\bfseries control\+\_\+freq} = 20000.\+0f
+\item 
+\Hypertarget{struct_axis_a1a2d07d7b781797e59520942b14301e8}\label{struct_axis_a1a2d07d7b781797e59520942b14301e8} 
+static constexpr float {\bfseries dt} = 1/control\+\_\+freq
+\end{DoxyCompactItemize}
+
+
+\doxysubsection{Detailed Description}
+Main top level controller for the servo axis. 
+
+used to coordinates the servo state machine and error fault handling, which includes the \doxylink{class_a_d_c}{ADC}, \doxylink{class_encoder}{Encoder}, \doxylink{class_motor}{Motor}, \doxylink{class_controller}{Controller} and future desired module run the update() with the pwm clock to do error\+\_\+check() 
+
+\label{struct_axis_doc-func-members}
+\Hypertarget{struct_axis_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{struct_axis_a43fcae1d66d46ae9d035ec3fdc696892}\index{Axis@{Axis}!init@{init}}
+\index{init@{init}!Axis@{Axis}}
+\doxysubsubsection{\texorpdfstring{init()}{init()}}
+{\footnotesize\ttfamily \label{struct_axis_a43fcae1d66d46ae9d035ec3fdc696892} 
+bool Axis::\+init (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Initialize axis modules. 
+
+\begin{DoxyReturn}{Returns}
+True if all modules successfully initialized, false if error occured 
+\end{DoxyReturn}
+Here is the call graph for this function:
+% FIG 0
+\Hypertarget{struct_axis_adc6d5e3ebaa39a3984b0b4aa97af92e7}\index{Axis@{Axis}!motor\_current@{motor\_current}}
+\index{motor\_current@{motor\_current}!Axis@{Axis}}
+\doxysubsubsection{\texorpdfstring{motor\_current()}{motor\_current()}}
+{\footnotesize\ttfamily \label{struct_axis_adc6d5e3ebaa39a3984b0b4aa97af92e7} 
+float Axis::\+motor\+\_\+current (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+get current value and direction 
+
+\begin{DoxyReturn}{Returns}
+motor current in Amps 
+\end{DoxyReturn}
+\Hypertarget{struct_axis_a0a1d1abb6b162d4847554f5035c0cedb}\index{Axis@{Axis}!save\_config@{save\_config}}
+\index{save\_config@{save\_config}!Axis@{Axis}}
+\doxysubsubsection{\texorpdfstring{save\_config()}{save\_config()}}
+{\footnotesize\ttfamily \label{struct_axis_a0a1d1abb6b162d4847554f5035c0cedb} 
+bool Axis::\+save\+\_\+config (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+save the axis and the other modules configuration 
+
+\begin{DoxyReturn}{Returns}
+true if data sucessfully flashed 
+\end{DoxyReturn}
+\Hypertarget{struct_axis_a69fe82acc364ad17fbec4ee61a9b5123}\index{Axis@{Axis}!set\_position@{set\_position}}
+\index{set\_position@{set\_position}!Axis@{Axis}}
+\doxysubsubsection{\texorpdfstring{set\_position()}{set\_position()}}
+{\footnotesize\ttfamily \label{struct_axis_a69fe82acc364ad17fbec4ee61a9b5123} 
+bool Axis::\+set\+\_\+position (\begin{DoxyParamCaption}\item[{float}]{p\+\_\+target}{}\end{DoxyParamCaption})}
+
+
+
+user interaction to set the position target 
+
+
+\begin{DoxyParams}{Parameters}
+{\em p\+\_\+target} & target position in rad \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+TRUE: if target is achievable 
+
+FALSE: if the current velocity is above the threshold 
+\end{DoxyReturn}
+\Hypertarget{struct_axis_a1fa66674572d3eedf99d43bc05e5eac2}\index{Axis@{Axis}!set\_state@{set\_state}}
+\index{set\_state@{set\_state}!Axis@{Axis}}
+\doxysubsubsection{\texorpdfstring{set\_state()}{set\_state()}}
+{\footnotesize\ttfamily \label{struct_axis_a1fa66674572d3eedf99d43bc05e5eac2} 
+bool Axis::\+set\+\_\+state (\begin{DoxyParamCaption}\item[{Axis\+\_\+\+States}]{states}{}\end{DoxyParamCaption})}
+
+
+
+change and execute the initial conditions for the desired axis state 
+
+
+\begin{DoxyParams}{Parameters}
+{\em new} & desired state \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+TRUE if specified conditions is satisfied 
+\end{DoxyReturn}
+Here is the caller graph for this function:
+% FIG 1
+\Hypertarget{struct_axis_a453817b3cbf2d1a874a227c5c5fb34ec}\index{Axis@{Axis}!set\_torque@{set\_torque}}
+\index{set\_torque@{set\_torque}!Axis@{Axis}}
+\doxysubsubsection{\texorpdfstring{set\_torque()}{set\_torque()}}
+{\footnotesize\ttfamily \label{struct_axis_a453817b3cbf2d1a874a227c5c5fb34ec} 
+bool Axis::\+set\+\_\+torque (\begin{DoxyParamCaption}\item[{float}]{t\+\_\+target}{}\end{DoxyParamCaption})}
+
+
+
+user interaction to set the torque target 
+
+
+\begin{DoxyParams}{Parameters}
+{\em t\+\_\+target} & target torque in Nm \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if target is valid 
+\end{DoxyReturn}
+\Hypertarget{struct_axis_a8b0b004b24a50d89f93d1f95faafc082}\index{Axis@{Axis}!set\_velocity@{set\_velocity}}
+\index{set\_velocity@{set\_velocity}!Axis@{Axis}}
+\doxysubsubsection{\texorpdfstring{set\_velocity()}{set\_velocity()}}
+{\footnotesize\ttfamily \label{struct_axis_a8b0b004b24a50d89f93d1f95faafc082} 
+bool Axis::\+set\+\_\+velocity (\begin{DoxyParamCaption}\item[{float}]{v\+\_\+target}{}\end{DoxyParamCaption})}
+
+
+
+user interaction to set the velocity target 
+
+
+\begin{DoxyParams}{Parameters}
+{\em v\+\_\+target} & target velocity in rad/\+s \\
+\hline
+\end{DoxyParams}
+\begin{DoxyReturn}{Returns}
+true if target is valid 
+\end{DoxyReturn}
+
+
+The documentation for this struct was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+Inc/axis.\+hpp\item 
+Src/axis.\+cpp\end{DoxyCompactItemize}

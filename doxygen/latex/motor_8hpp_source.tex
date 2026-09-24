@@ -1,0 +1,177 @@
+\doxysection{motor.\+hpp}
+\hypertarget{motor_8hpp_source}{}\label{motor_8hpp_source}\index{Inc/motor.hpp@{Inc/motor.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00002\ \textcolor{comment}{TODO:}}
+\DoxyCodeLine{00003\ \textcolor{comment}{\ \ \ \ \string~find\ torque\ constant\ from\ motor}}
+\DoxyCodeLine{00004\ \textcolor{comment}{}}
+\DoxyCodeLine{00005\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00008\ \textcolor{preprocessor}{\#define\ S\_MODE\_PWM\ \ \ \ \ \ (0b10)}}
+\DoxyCodeLine{00009\ }
+\DoxyCodeLine{00010\ \textcolor{comment}{//\ CONFIG1\ —\ bit\ positions\ from\ your\ Table\ 7-\/23}}
+\DoxyCodeLine{00011\ \textcolor{preprocessor}{\#define\ CFG1\_EN\_OLA\ \ \ \ \ (1u\ <<\ 7)\ \ \ \ \ \ \ }\textcolor{comment}{//\ enable\ open\ load\ detection\ in\ the\ active\ state.}}
+\DoxyCodeLine{00012\ \textcolor{preprocessor}{\#define\ CFG1\_OTW\_SEL\ \ \ \ (1u\ <<\ 6)\ \ \ \ \ \ \ }\textcolor{comment}{//\ Over\ Temperature\ Warning\ threshold\ 0b\ =\ 140C\ 1b\ =\ 120C}}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#define\ CFG1\_OVSEL\ \ \ \ \ \ (1u\ <<\ 5)\ \ \ \ \ \ \ }\textcolor{comment}{//\ 0b:\ VMOV\ enabled\ \ \ \ \ 1b:\ VMOV\ disabled}}
+\DoxyCodeLine{00014\ \textcolor{preprocessor}{\#define\ CFG1\_SSC\_DIS\ \ \ \ (1u\ <<\ 4)\ \ \ \ \ \ \ }\textcolor{comment}{//\ Enables\ the\ spread\ spectrum\ clocking\ feature}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#define\ CFG1\_OCP\_RTRY\ \ \ (1u\ <<\ 3)\ \ \ \ \ \ \ }\textcolor{comment}{//\ 1b\ to\ configure\ fault\ reaction\ to\ retry\ setting\ on\ the\ detection\ of\ overCURRENT}}
+\DoxyCodeLine{00016\ \textcolor{preprocessor}{\#define\ CFG1\_TSD\_RTRY\ \ \ (1u\ <<\ 2)\ \ \ \ \ \ \ }\textcolor{comment}{//\ 1b\ to\ configure\ fault\ reaction\ to\ retry\ setting\ on\ the\ detection\ of\ overTEMP}}
+\DoxyCodeLine{00017\ \textcolor{preprocessor}{\#define\ CFG1\_OV\_RTRY\ \ \ \ (1u\ <<\ 1)\ \ \ \ \ \ \ }\textcolor{comment}{//\ 1b\ to\ configure\ fault\ reaction\ to\ retry\ setting\ on\ the\ detection\ of\ overVOLT}}
+\DoxyCodeLine{00018\ \textcolor{preprocessor}{\#define\ CFG1\_OLA\_RTRY\ \ \ (1u\ <<\ 0)}}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{comment}{//\ All\ *\_RTRY\ clear\ =\ latched\ faults,\ which\ is\ what\ a\ servo\ wants.}}
+\DoxyCodeLine{00021\ \textcolor{preprocessor}{\#define\ CONFIG1\ \ \ \ \ (CFG1\_SSC\_DIS)\ \ \ }\textcolor{comment}{//\ or\ 0\ to\ enable\ spread\ spectrum\ }}
+\DoxyCodeLine{00022\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint8\_t\ CONFIG1\_VAL\ =\ \textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(CONFIG1);}
+\DoxyCodeLine{00023\ }
+\DoxyCodeLine{00024\ \textcolor{comment}{//\ CONFIG2}}
+\DoxyCodeLine{00025\ \textcolor{preprocessor}{\#define\ CFG2\_EXTEND\ \ \ \ \ (1u\ <<\ 7)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{//\ enable\ extend\ hi-\/z\ }}
+\DoxyCodeLine{00026\ \textcolor{preprocessor}{\#define\ CFG2\_S\_DIAG(x)\ \ (((x)\ \&\ 0x3u)\ <<\ 5)\ \ \ \ \ }\textcolor{comment}{//\ s\_diag}}
+\DoxyCodeLine{00027\ \textcolor{preprocessor}{\#define\ CFG2\_ISEL(x)\ \ \ \ (((x)\ \&\ 0x3u)\ <<\ 3)\ \ \ \ \ }\textcolor{comment}{//\ current\ mirror\ or\ temperature\ }}
+\DoxyCodeLine{00028\ \textcolor{preprocessor}{\#define\ CFG2\_S\_ITRIP(x)\ (((x)\ \&\ 0x7u)\ <<\ 0)\ \ \ \ \ }\textcolor{comment}{//\ ITRIP\ voltage\ regulator}}
+\DoxyCodeLine{00029\ }
+\DoxyCodeLine{00030\ \textcolor{preprocessor}{\#define\ CONFIG2\ \ \ \ (CFG2\_ISEL(0b11)\ |\ CFG2\_S\_ITRIP(0b000))\ \ \ \ }\textcolor{comment}{//\ activate\ current\ mirror,\ itrip\ disabled}}
+\DoxyCodeLine{00031\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint8\_t\ CONFIG2\_VAL\ =\ \textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(CONFIG2);}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \textcolor{comment}{//\ CONFIG3}}
+\DoxyCodeLine{00034\ \textcolor{preprocessor}{\#define\ CFG3\_TOFF(x)\ \ \ \ (((x)\ \&\ 0x3u)\ <<\ 6)\ \ \ \ \ }\textcolor{comment}{//\ ITRIP\ shutdown\ time}}
+\DoxyCodeLine{00035\ \textcolor{preprocessor}{\#define\ CFG3\_EN\_POB\ \ \ \ \ (1u\ <<\ 5)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{//\ powered\ off\ braking\ }}
+\DoxyCodeLine{00036\ \textcolor{preprocessor}{\#define\ CFG3\_TBLK\ \ \ \ \ \ \ (1u\ <<\ 4)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{//\ blank\ time\ conf}}
+\DoxyCodeLine{00037\ \textcolor{preprocessor}{\#define\ CFG3\_SR(x)\ \ \ \ \ \ (((x)\ \&\ 0x3u)\ <<\ 2)\ \ \ \ \ }\textcolor{comment}{//\ slew\ rate\ conf}}
+\DoxyCodeLine{00038\ \textcolor{preprocessor}{\#define\ CFG3\_S\_MODE(x)\ \ (((x)\ \&\ 0x3u)\ <<\ 0)\ \ \ \ \ }\textcolor{comment}{//\ device\ mode\ configuration}}
+\DoxyCodeLine{00039\ }
+\DoxyCodeLine{00040\ \textcolor{preprocessor}{\#define\ CONFIG3\ \ \ \ \ (CFG3\_TOFF(0b01)\ |\ CFG3\_SR(0b01)\ |\ \(\backslash\)}}
+\DoxyCodeLine{00041\ \textcolor{preprocessor}{\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ CFG3\_S\_MODE(S\_MODE\_PWM))\ \ \ \ }\textcolor{comment}{//\ activate\ driver\ PWM\ mode}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint8\_t\ CONFIG3\_VAL\ =\ \textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(CONFIG3);}
+\DoxyCodeLine{00044\ }
+\DoxyCodeLine{00045\ \textcolor{comment}{//\ CONFIG4}}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#define\ CFG4\_OTW\_REP\ \ \ \ (1u\ <<\ 7)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{//\ 1b\ for\ overtemp\ in\ fault\ or\ not\ 0b}}
+\DoxyCodeLine{00047\ \textcolor{preprocessor}{\#define\ CFG4\_TOCP\ \ \ \ \ \ \ (1u\ <<\ 6)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{//\ filter\ time\ for\ overcurrent}}
+\DoxyCodeLine{00048\ \textcolor{preprocessor}{\#define\ CFG4\_OLA\_FLTR\ \ \ (1u\ <<\ 5)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{//\ OLA\ filter}}
+\DoxyCodeLine{00049\ \textcolor{preprocessor}{\#define\ CFG4\_OCP\_SEL(x)\ (((x)\ \&\ 0x3u)\ <<\ 3)\ \ \ \ \ }\textcolor{comment}{//\ threshold\ current\ regulation}}
+\DoxyCodeLine{00050\ \textcolor{preprocessor}{\#define\ CFG4\_DRV\_SEL\ \ \ \ (1u\ <<\ 2)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{//\ DRVPIN\ [0b\ OR]\ or\ [1b\ AND]}}
+\DoxyCodeLine{00051\ \textcolor{preprocessor}{\#define\ CFG4\_ENIN1\_SEL\ \ (1u\ <<\ 1)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{//\ EN/IN\ 1\ pin\ register}}
+\DoxyCodeLine{00052\ \textcolor{preprocessor}{\#define\ CFG4\_PHIN2\_SEL\ \ (1u\ <<\ 0)\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ }\textcolor{comment}{//\ PH/IN\ 2\ pin\ register}}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \textcolor{preprocessor}{\#define\ CONFIG4\ \ \ \ \ (CFG4\_TOCP\ |\ CFG4\_OCP\_SEL(0b00)\ |\ CFG4\_DRV\_SEL)}}
+\DoxyCodeLine{00055\ }
+\DoxyCodeLine{00056\ \textcolor{keyword}{static}\ \textcolor{keyword}{constexpr}\ uint8\_t\ CONFIG4\_VAL\ =\ \textcolor{keyword}{static\_cast<}uint8\_t\textcolor{keyword}{>}(CONFIG4);}
+\DoxyCodeLine{00057\ }
+\DoxyCodeLine{00058\ }
+\DoxyCodeLine{00059\ \textcolor{keyword}{namespace\ }DrvReg\ \{}
+\DoxyCodeLine{00060\ \ \ \ \ \textcolor{keyword}{constexpr}\ uint8\_t\ DEVICE\_ID\ =\ 0x00;\ \ \ \ \ \textcolor{comment}{//\ val\ :\ Device\ name\ and\ ID\ value}}
+\DoxyCodeLine{00061\ \ \ \ \ \textcolor{keyword}{constexpr}\ uint8\_t\ FAULT\ \ \ \ \ =\ 0x01;\ \ \ \ \ \textcolor{comment}{//\ SPI\_error,\ power-\/on-\/reset,\ logic\ fault,\ under/over\ voltage,\ overtemp}}
+\DoxyCodeLine{00062\ \ \ \ \ \textcolor{keyword}{constexpr}\ uint8\_t\ STATUS1\ \ \ =\ 0x02;\ \ \ \ \ \textcolor{comment}{//\ Device\ status\ and\ overcurrent\ warning}}
+\DoxyCodeLine{00063\ \ \ \ \ \textcolor{keyword}{constexpr}\ uint8\_t\ STATUS2\ \ \ =\ 0x03;\ \ \ \ \ \textcolor{comment}{//\ DRV\_OFF\ and\ device\ status\ and\ overtemp\ warning}}
+\DoxyCodeLine{00064\ \ \ \ \ \textcolor{keyword}{constexpr}\ uint8\_t\ COMMAND\ \ \ =\ 0x08;\ \ \ \ \ \textcolor{comment}{//\ clear\ fault,\ SPI\ \&\ REG\ lock}}
+\DoxyCodeLine{00065\ \ \ \ \ \textcolor{keyword}{constexpr}\ uint8\_t\ SPI\_IN\ \ \ \ =\ 0x09;}
+\DoxyCodeLine{00066\ \ \ \ \ \textcolor{keyword}{constexpr}\ uint8\_t\ CFG1\_REG\ \ =\ 0x0A;}
+\DoxyCodeLine{00067\ \ \ \ \ \textcolor{keyword}{constexpr}\ uint8\_t\ CFG2\_REG\ \ =\ 0x0B;}
+\DoxyCodeLine{00068\ \ \ \ \ \textcolor{keyword}{constexpr}\ uint8\_t\ CFG3\_REG\ \ =\ 0x0C;}
+\DoxyCodeLine{00069\ \ \ \ \ \textcolor{keyword}{constexpr}\ uint8\_t\ CFG4\_REG\ \ =\ 0x0D;}
+\DoxyCodeLine{00070\ \}}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ }
+\DoxyCodeLine{00073\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_motor}{Motor}}\{}
+\DoxyCodeLine{00074\ }
+\DoxyCodeLine{00075\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Motor\ module\ configuration}}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{struct_motor_1_1config__mot}{config\_mot}}\{}
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ inductance\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calibrated\ in\ Calculate\_L()\ \ [Henries]}}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ resistance\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Calibrated\ in\ Calculate\_R()\ \ [Ohms]}}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ torque\_constant\ =\ 0.0f;\ \ \ \ \ \ \ \textcolor{comment}{//\ MOTOR\ DATASHEET\ \ [Nm/A]}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//float\ current\_limit\ =\ 28.0f;\ \ \ \ \ \ //\ MOTOR\ FULLSCALE\ CURRENT\ [Amps]\ 28A\ is\ unreachable\ from\ R\_IPROPI}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ current\_limit\ =\ 24.0f;\ \ \ \ \ \ \ \ \textcolor{comment}{//\ MOTOR\ FULLSCALE\ CURRENT\ [Amps]}}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ current\_max\_step\ =\ 0.0f;\ \ \ \ \ \ \textcolor{comment}{//\ DEFINE\ THIS}}
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ duty\_step\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ DEFINE\ THIS}}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ torque\_limit\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ DEFINE\ THIS}}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ current\_bandwidth\ =\ 0.0f;\ \ \ \ \ \textcolor{comment}{//\ DEFINE\ THIS}}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Kp\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ DEFINE\ THIS}}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Ki\ =\ 0.0f;\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ DEFINE\ THIS}}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ integrator\_limit\ =\ 0.0f;\ \ \ \ \ \ \textcolor{comment}{//\ DEFINE\ THIS}}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00091\ }
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum}\ Motor\_mode\{}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ MOTOR\_IDLE,\ \ \ \ \ }
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \ \ \ \ MOTOR\_OPEN\_CONTROL,}
+\DoxyCodeLine{00095\ \ \ \ \ \ \ \ \ \ \ \ \ MOTOR\_CLOSED\_CONTROL,}
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00097\ }
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum}\ Motor\_Error\ :\ uint32\_t\{}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_NONE\ =\ 0,}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_INVALID\_RESISTANCE\ =\ 1U\ <<\ 1,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_INVALID\_INDUCTANCE\ =\ 1U\ <<\ 2,}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_INVALID\_GAIN\ \ \ \ \ \ \ =\ 1U\ <<\ 3,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_DRIVER\_FAULT\ \ \ \ \ \ \ =\ 1U\ <<\ 4,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_SPI\_INIT\_FAIL\ \ \ \ \ \ =\ 1U\ <<\ 5\ }
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00106\ }
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ Motor\_mode\ Mode\ =\ MOTOR\_IDLE;}
+\DoxyCodeLine{00108\ }
+\DoxyCodeLine{00109\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Motor\ resistance\ calibration\ sequence}}
+\DoxyCodeLine{00110\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ Calculate\_R(\textcolor{keywordtype}{float}\ V,\ \textcolor{keywordtype}{float}\ I);}
+\DoxyCodeLine{00111\ }
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Motor\ inductance\ calibration\ sequence}}
+\DoxyCodeLine{00113\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ Calculate\_L(\textcolor{keywordtype}{float}\ V,\ \textcolor{keywordtype}{float}\ I\_init,\ \textcolor{keywordtype}{float}\ I\_final,\ \textcolor{keywordtype}{float}\ dt);}
+\DoxyCodeLine{00114\ }
+\DoxyCodeLine{00119\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_motor_af2bcae5f3d72a3a7cff006b3db0e6c12}{Is\_calibrated}}();}
+\DoxyCodeLine{00120\ }
+\DoxyCodeLine{00125\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_motor_ae1cdbc2c03e4d19bdca31364ce994556}{set\_duty\_target}}(\textcolor{keywordtype}{float}\ duty);}
+\DoxyCodeLine{00126\ }
+\DoxyCodeLine{00127\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Change\ motor\ mode}}
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_mode(Motor\_mode\ mode);}
+\DoxyCodeLine{00129\ }
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_motor_aa3587f1672346fa8a845b3e62da0c25f}{current\_target}}(\textcolor{keywordtype}{float}\ torque,\ \textcolor{keywordtype}{float}\ timestep);}
+\DoxyCodeLine{00139\ }
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_motor_a0d77684c153e65eec766132693f7f805}{current\_inner\_loop}}(\textcolor{keywordtype}{float}\ I\_LOAD,\ \textcolor{keywordtype}{float}\ V\_BUS);}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ error\_check();}
+\DoxyCodeLine{00145\ }
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ update\_gain(\textcolor{keywordtype}{float}\ BW);}
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ arm();}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ disarm();}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ isarmed\_;}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ config\_m\&\ get\_config()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ cfg\_;\ \};}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_config(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{struct_motor_1_1config__mot}{config\_mot}}\&\ config\_load);}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ Motor\_mode\ get\_mode()\textcolor{keyword}{\ const\ }\{\ \textcolor{keywordflow}{return}\ Mode;\ \};}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ Motor\_Error\ get\_error()\ \{\ \textcolor{keywordflow}{return}\ Error\_;\ \};}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ get\_nfault()\ \{\textcolor{keywordflow}{return}\ nfault\_read\_pending;\};}
+\DoxyCodeLine{00157\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ read\_nfault();}
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ current\_temperature\_limit(\textcolor{keywordtype}{float}\ scale);}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ }
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ duty\_steppoint\ =\ 0.0f;}
+\DoxyCodeLine{00162\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ true\_torque\_limit;}
+\DoxyCodeLine{00163\ }
+\DoxyCodeLine{00164\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ init();}
+\DoxyCodeLine{00165\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00166\ }
+\DoxyCodeLine{00167\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00168\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_motor_1_1config__mot}{config\_mot}}\ cfg\_;}
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ Motor\_Error\ Error\_\ =\ ERROR\_NONE;}
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00171\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ v\_int\ =\ 0.0f;}
+\DoxyCodeLine{00172\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ v\_feedforward\ =\ 0.0f;}
+\DoxyCodeLine{00173\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ i\_setpoint\ =\ 0.0f;}
+\DoxyCodeLine{00174\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ i\_target\ =\ 0.0f;}
+\DoxyCodeLine{00175\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ duty\_target\ =\ 0.0f;}
+\DoxyCodeLine{00176\ }
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_motor_a0d77684c153e65eec766132693f7f805}{current\_inner\_loop}}(\textcolor{keywordtype}{float}\ I\_LOAD,\ \textcolor{keywordtype}{float}\ V\_BUS);}
+\DoxyCodeLine{00178\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ error\_check();}
+\DoxyCodeLine{00179\ }
+\DoxyCodeLine{00180\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ nfault\_read\_pending;}
+\DoxyCodeLine{00181\ }
+\DoxyCodeLine{00182\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ drv\_spi(uint16\_t\ tx,\ uint16\_t\ *rx);}
+\DoxyCodeLine{00183\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ drv\_read(uint8\_t\ address,\ uint8\_t\ *data,\ uint8\_t\ *status);}
+\DoxyCodeLine{00184\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ drv\_write(uint8\_t\ address,\ uint8\_t\ *data);}
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00186\ \ \ \ \ \ \ \ \ uint8\_t\ motor\_status\ =\ 0;}
+\DoxyCodeLine{00187\ \ \ \ \ \ \ \ \ uint8\_t\ STATUS1\_vals\ =\ 0;}
+\DoxyCodeLine{00188\ \ \ \ \ \ \ \ \ uint8\_t\ STATUS2\_vals\ =\ 0;}
+\DoxyCodeLine{00189\ }
+\DoxyCodeLine{00190\ \};}
+
+\end{DoxyCode}

@@ -1,0 +1,151 @@
+\doxysection{adc\+\_\+readout.\+hpp}
+\hypertarget{adc__readout_8hpp_source}{}\label{adc__readout_8hpp_source}\index{Inc/adc\_readout.hpp@{Inc/adc\_readout.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{comment}{//\ ADC\ CH1\ Input\ processing}}
+\DoxyCodeLine{00002\ }
+\DoxyCodeLine{00003\ \textcolor{comment}{/*}}
+\DoxyCodeLine{00004\ \textcolor{comment}{\ *\ ACTIVE\ ADC\ CHANNEL1\ :}}
+\DoxyCodeLine{00005\ \textcolor{comment}{\ *\ CH1\ IN5\ :\ CURRENT\ SENSOR\ [DRV\_IPROPI]}}
+\DoxyCodeLine{00006\ \textcolor{comment}{\ *\ CH1\ IN6\ :\ TEMPERATURE\ SENSOR\ [T\_FET]}}
+\DoxyCodeLine{00007\ \textcolor{comment}{\ *\ CH1\ IN7\ :\ VOLTAGE\ SENSOR\ [V\_BUS]}}
+\DoxyCodeLine{00008\ \textcolor{comment}{\ *\ CH1\ IN8\ :\ TEMPERATURE\ SENSOR\ [T\_MOT]}}
+\DoxyCodeLine{00009\ \textcolor{comment}{\ *\ CH1\ IN9\ :\ POTENTIOMETER\ [POT]\ (im\ pretty\ sure\ we\ dont\ use\ this\ ?)}}
+\DoxyCodeLine{00010\ \textcolor{comment}{*/}}
+\DoxyCodeLine{00011\ }
+\DoxyCodeLine{00012\ }
+\DoxyCodeLine{00022\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_a_d_c}{ADC}}\{}
+\DoxyCodeLine{00023\ \ \ \ \ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ADC\ module\ error\ classification}}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ \textcolor{keyword}{enum}\ ADC\_Error\ :\ uint32\_t\{}
+\DoxyCodeLine{00026\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_NONE\ \ =\ 0,}
+\DoxyCodeLine{00027\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_IDRV\_INVALID\_READ\ \ =\ 1U\ <<\ 1,}
+\DoxyCodeLine{00028\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_IDRV\_CURRENT\_OVER\ \ =\ 1U\ <<\ 2,}
+\DoxyCodeLine{00029\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TFET\_INVALID\_READ\ \ =\ 1U\ <<\ 3,}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TMOT\_INVALID\_READ\ \ =\ 1U\ <<\ 4,}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TFET\_TEMP\_FAILURE\ \ =\ 1U\ <<\ 7,}
+\DoxyCodeLine{00032\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TMOT\_TEMP\_FAILURE\ \ =\ 1U\ <<\ 8,}
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TEMP\_MISMATCH\ \ \ \ \ \ =\ 1U\ <<\ 9,}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_VBUS\_INVALID\_READ\ \ =\ 1U\ <<\ 10,}
+\DoxyCodeLine{00035\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_VBUS\_UNDERVOLTAGE\ \ =\ 1U\ <<\ 11,}
+\DoxyCodeLine{00036\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_VBUS\_OVERVOLTAGE\ \ \ =\ 1U\ <<\ 12}
+\DoxyCodeLine{00037\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ADC\ module\ configuration}}
+\DoxyCodeLine{00040\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{struct_a_d_c_1_1config__adc}{config\_adc}}\{}
+\DoxyCodeLine{00041\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Schematics\ OR\ datasheet\ based\ configuration}}
+\DoxyCodeLine{00042\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ VDDA\ \ \ \ \ \ \ \ \ \ \ \ =\ 3.3f;\ \ \ \ \ \textcolor{comment}{//\ Volt}}
+\DoxyCodeLine{00043\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ ADC\_RES\ \ \ \ \ \ \ \ \ =\ 4095.0f;\ \ \textcolor{comment}{//\ ADC\ resolution}}
+\DoxyCodeLine{00044\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ IPROPI\_resistor\ =\ 680.0f;\ \ \ \textcolor{comment}{//\ motor\_DRV\ resistor\ \ \ \ \ \ \ \ \ \ \ \ \ \ \ [SCHEMATICS]}}
+\DoxyCodeLine{00045\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ DRV\_I\_gain\ \ \ \ \ \ =\ 202e-\/6f;\ \ \textcolor{comment}{//\ motor\_DRV\ current\ gain\ \ \ \ \ \ \ \ \ \ \ [DATASHEET]}}
+\DoxyCodeLine{00046\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ T\_FIX\_RES\ \ \ \ \ \ \ =\ 3.3e3f;\ \ \ \textcolor{comment}{//\ Thermistor\ voltage\ divider\ resistor\ [SCHEMATICS]}}
+\DoxyCodeLine{00047\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ V\_BUS\_DIVIDER\ \ \ =\ 19;\ \ \ \ \ \ \ \textcolor{comment}{//\ VBUS\ voltage\ divider\ resistor\ \ \ \ [SCHEMATICS]}}
+\DoxyCodeLine{00048\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Customizable\ configuration\ }}
+\DoxyCodeLine{00049\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ DRV\_I\_limit\ \ \ \ \ =\ 23.0f;\ \ \ \ \textcolor{comment}{//\ V\_IPROPI\ reaching\ 3.3V\ }}
+\DoxyCodeLine{00050\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ V\_BUS\_UVOLTAGE\ \ =\ 4.25f;\ \ \ \ \textcolor{comment}{//\ VBUS\ undervoltage\ threshold\ \ \ \ \ \ [DATASHEET]\ \ \ might\ have\ to\ change\ this}}
+\DoxyCodeLine{00051\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ V\_BUS\_OVOLTAGE\ \ =\ 62.0f;\ \ \ \ \textcolor{comment}{//\ VBUS\ overvoltage\ threshold\ \ \ \ \ \ \ [DATASHEET]\ \ \ might\ have\ to\ change\ this}}
+\DoxyCodeLine{00052\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00053\ }
+\DoxyCodeLine{00054\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ADC\ raw\ voltage\ reading}}
+\DoxyCodeLine{00055\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{struct_a_d_c_1_1_a_d_c___volts}{ADC\_Volts}}\{}
+\DoxyCodeLine{00056\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ VDRV;}
+\DoxyCodeLine{00057\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ VTFET;}
+\DoxyCodeLine{00058\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ VBUS;}
+\DoxyCodeLine{00059\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ VTMOT;}
+\DoxyCodeLine{00060\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ POT\ =\ 0.0f;}
+\DoxyCodeLine{00061\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00062\ }
+\DoxyCodeLine{00063\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ADC\ processed\ values}}
+\DoxyCodeLine{00064\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{struct_a_d_c_1_1_a_d_c___result}{ADC\_Result}}\{}
+\DoxyCodeLine{00065\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ I\_IPROPI;}
+\DoxyCodeLine{00066\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ I\_LOAD;}
+\DoxyCodeLine{00067\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ T\_FET;}
+\DoxyCodeLine{00068\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ T\_MOT;}
+\DoxyCodeLine{00069\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ V\_BUS;}
+\DoxyCodeLine{00070\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00071\ }
+\DoxyCodeLine{00072\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Thermal\ varying\ resistor\ structur}}
+\DoxyCodeLine{00073\ \ \ \ \ \ \ \ \ \textcolor{keyword}{struct\ }\doxymbox{\hyperlink{struct_a_d_c_1_1_thermistor}{Thermistor}}\{}
+\DoxyCodeLine{00074\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ R\_INIT;\ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ R\ Thermistor\ @25C\ [DATASHEET]}}
+\DoxyCodeLine{00075\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Beta;\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Resistance\ changes\ due\ to\ temp\ [DATASHEET]}}
+\DoxyCodeLine{00076\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ WARNING\_TEMP;}
+\DoxyCodeLine{00077\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ FAILURE\_TEMP;\ \ }
+\DoxyCodeLine{00078\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ derating\_scale;}
+\DoxyCodeLine{00079\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ WARNING;\ \ \ \ \ \ \textcolor{comment}{//\ sent\ warning\ status\ \ \ \ \ \ \ \ \ \ }}
+\DoxyCodeLine{00080\ \ \ \ \ \ \ \ \ \ \ \ \ ADC\_Error\ FAULTYREAD;\ \ \ \textcolor{comment}{//\ ADC\ not\ working\ properly}}
+\DoxyCodeLine{00081\ \ \ \ \ \ \ \ \ \ \ \ \ ADC\_Error\ SHUTDOWN;\ \ \ \ \ \textcolor{comment}{//\ overheat,\ shutdown}}
+\DoxyCodeLine{00082\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00083\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00084\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Thermistor\ FET\ [datasheet:\ ]}}
+\DoxyCodeLine{00085\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_a_d_c_1_1_thermistor}{Thermistor}}\ Thermistor\_FET\{}
+\DoxyCodeLine{00086\ \ \ \ \ \ \ \ \ \ \ \ \ 10000.0f,}
+\DoxyCodeLine{00087\ \ \ \ \ \ \ \ \ \ \ \ \ 3453.0f,\ \ \ \ \textcolor{comment}{//\ [PLACEHOLDER]\ MISSING\ DATASHEET}}
+\DoxyCodeLine{00088\ \ \ \ \ \ \ \ \ \ \ \ \ 80.0f,}
+\DoxyCodeLine{00089\ \ \ \ \ \ \ \ \ \ \ \ \ 110.0f,}
+\DoxyCodeLine{00090\ \ \ \ \ \ \ \ \ \ \ \ \ fet\_scale,}
+\DoxyCodeLine{00091\ \ \ \ \ \ \ \ \ \ \ \ \ TFET\_WARNING,}
+\DoxyCodeLine{00092\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TFET\_INVALID\_READ,}
+\DoxyCodeLine{00093\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TFET\_TEMP\_FAILURE}
+\DoxyCodeLine{00094\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00095\ }
+\DoxyCodeLine{00096\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Motor\ board\ built-\/in\ Thermistor\ [datasheet:\ ]}}
+\DoxyCodeLine{00097\ \ \ \ \ \ \ \ \ Thermistor\ Thermistor\_MOT\{}
+\DoxyCodeLine{00098\ \ \ \ \ \ \ \ \ \ \ \ \ 10000.0f,\ \ \ \textcolor{comment}{//\ [DATASHEET]}}
+\DoxyCodeLine{00099\ \ \ \ \ \ \ \ \ \ \ \ \ 4000.0f,\ \ \ \textcolor{comment}{//\ [DATASHEET]}}
+\DoxyCodeLine{00100\ \ \ \ \ \ \ \ \ \ \ \ \ 80.0f,}
+\DoxyCodeLine{00101\ \ \ \ \ \ \ \ \ \ \ \ \ 110.0f,}
+\DoxyCodeLine{00102\ \ \ \ \ \ \ \ \ \ \ \ \ mot\_scale,}
+\DoxyCodeLine{00103\ \ \ \ \ \ \ \ \ \ \ \ \ TMOT\_WARNING,}
+\DoxyCodeLine{00104\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TMOT\_INVALID\_READ,}
+\DoxyCodeLine{00105\ \ \ \ \ \ \ \ \ \ \ \ \ ERROR\_TMOT\_TEMP\_FAILURE}
+\DoxyCodeLine{00106\ \ \ \ \ \ \ \ \ \};}
+\DoxyCodeLine{00107\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00112\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_a_d_c_a7873fde0b99f5ec62ec644ad360a5fe3}{init}}();}
+\DoxyCodeLine{00113\ }
+\DoxyCodeLine{00120\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ \doxymbox{\hyperlink{class_a_d_c_a868f0b8d3f780712c3e2621d9b4b58d4}{update}}();}
+\DoxyCodeLine{00121\ }
+\DoxyCodeLine{00126\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ \doxymbox{\hyperlink{class_a_d_c_ac2670e8ec346e4a92707891c28c5b14d}{error\_check}}()}
+\DoxyCodeLine{00127\ }
+\DoxyCodeLine{00128\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ functions\ used\ to\ extract\ ADC\ private\ variables}}
+\DoxyCodeLine{00129\ \ \ \ \ \ \ \ \ const\ \doxymbox{\hyperlink{struct_a_d_c_1_1_a_d_c___result}{ADC\_Result}}\&\ get()\textcolor{keyword}{\ const\ }\{\textcolor{keywordflow}{return}\ result\_;\};}
+\DoxyCodeLine{00130\ \ \ \ \ \ \ \ \ \textcolor{keyword}{const}\ config\_adc\&\ get\_config()\textcolor{keyword}{\ const\ }\{\textcolor{keywordflow}{return}\ cfg\_;\};}
+\DoxyCodeLine{00131\ \ \ \ \ \ \ \ \ ADC\_Error\&\ get\_error()\ \{\textcolor{keywordflow}{return}\ Error\_;\};}
+\DoxyCodeLine{00132\ }
+\DoxyCodeLine{00133\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ set\_config(\textcolor{keyword}{const}\ \doxymbox{\hyperlink{struct_a_d_c_1_1config__adc}{config\_adc}}\&\ config\_load);}
+\DoxyCodeLine{00134\ }
+\DoxyCodeLine{00135\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ this\ is\ a\ one\ time\ thing\ just\ for\ debug\ to\ see\ if\ the\ fast\ and\ slow\ update\ is\ executed}}
+\DoxyCodeLine{00136\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ adc\_slow;}
+\DoxyCodeLine{00137\ }
+\DoxyCodeLine{00138\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ Temperature\ warning\ trigger}}
+\DoxyCodeLine{00139\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ TMOT\_WARNING;}
+\DoxyCodeLine{00140\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{bool}\ TFET\_WARNING;}
+\DoxyCodeLine{00141\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00142\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ used\ to\ slowly\ decrease\ the\ torque/current\ limit\ based\ on\ current\ temperature}}
+\DoxyCodeLine{00143\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ mot\_scale;}
+\DoxyCodeLine{00144\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ fet\_scale;}
+\DoxyCodeLine{00145\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ scale;}
+\DoxyCodeLine{00146\ \ \ \ \ \ \ \ \ }
+\DoxyCodeLine{00147\ }
+\DoxyCodeLine{00148\ \ \ \ \ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00149\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ADC\ raw\ value\ volatile\ storage}}
+\DoxyCodeLine{00150\ \ \ \ \ \ \ \ \ \textcolor{keyword}{volatile}\ uint16\_t\ ADC\_raw[5];}
+\DoxyCodeLine{00151\ }
+\DoxyCodeLine{00152\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ADC\ internal\ structs}}
+\DoxyCodeLine{00153\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_a_d_c_1_1_a_d_c___volts}{ADC\_Volts}}\ \ voltage\_;}
+\DoxyCodeLine{00154\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_a_d_c_1_1_a_d_c___result}{ADC\_Result}}\ result\_;}
+\DoxyCodeLine{00155\ \ \ \ \ \ \ \ \ \doxymbox{\hyperlink{struct_a_d_c_1_1config__adc}{config\_adc}}\ cfg\_;}
+\DoxyCodeLine{00156\ \ \ \ \ \ \ \ \ ADC\_Error\ Error\_\ =\ ERROR\_NONE;}
+\DoxyCodeLine{00157\ }
+\DoxyCodeLine{00158\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Igain\ =\ 1.0f/(cfg\_.DRV\_I\_gain\ *\ cfg\_.IPROPI\_resistor);}
+\DoxyCodeLine{00159\ }
+\DoxyCodeLine{00160\ \ \ \ \ \ \ \ \ \textcolor{comment}{//\ ADC\_slow\ trigger\ timer}}
+\DoxyCodeLine{00161\ \ \ \ \ \ \ \ \ \textcolor{keyword}{volatile}\ uint32\_t\ ADC\_timer;\ }
+\DoxyCodeLine{00162\ }
+\DoxyCodeLine{00169\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{float}\ Thermistor\_NCT(\textcolor{keywordtype}{float}\ v,\ \doxymbox{\hyperlink{struct_a_d_c_1_1_thermistor}{Thermistor}}\&\ Tcfg\_);\ \ \ }
+\DoxyCodeLine{00170\ }
+\DoxyCodeLine{00177\ \ \ \ \ \ \ \ \ ADC\_Error\ temperature\_check(\textcolor{keywordtype}{float}\ temp,\ \doxymbox{\hyperlink{struct_a_d_c_1_1_thermistor}{Thermistor}}\&\ Tcfg\_);\ \ }
+\DoxyCodeLine{00178\ }
+\DoxyCodeLine{00185\ \ \ \ \ \ \ \ \ \textcolor{keywordtype}{void}\ ADC\_slow();}
+\DoxyCodeLine{00186\ \};}
+
+\end{DoxyCode}

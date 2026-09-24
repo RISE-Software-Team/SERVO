@@ -1,0 +1,52 @@
+\doxysection{utilities.\+hpp}
+\hypertarget{utilities_8hpp_source}{}\label{utilities_8hpp_source}\index{Inc/utilities.hpp@{Inc/utilities.hpp}}
+
+\begin{DoxyCode}{0}
+\DoxyCodeLine{00001\ \textcolor{preprocessor}{\#ifndef\ UTILITIES\_HPP}}
+\DoxyCodeLine{00002\ \textcolor{preprocessor}{\#define\ UTILITIES\_HPP}}
+\DoxyCodeLine{00003\ }
+\DoxyCodeLine{00004\ \textcolor{preprocessor}{\#include\ "{}main.h"{}}}
+\DoxyCodeLine{00005\ \textcolor{preprocessor}{\#include\ <cstdint>}}
+\DoxyCodeLine{00006\ }
+\DoxyCodeLine{00007\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00008\ \textcolor{keyword}{extern}\ \textcolor{stringliteral}{"{}C"{}}}
+\DoxyCodeLine{00009\ \{}
+\DoxyCodeLine{00010\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00011\ \ \ \ \ \textcolor{keywordtype}{void}\ logger(\textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ tag,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{char}*\ format,\ ...);\ \ }
+\DoxyCodeLine{00012\ \ \ \ \ \textcolor{keywordtype}{void}\ rgb\_set(uint8\_t\ r,\ uint8\_t\ g,\ uint8\_t\ b);}
+\DoxyCodeLine{00013\ \textcolor{preprocessor}{\#ifdef\ \_\_cplusplus}}
+\DoxyCodeLine{00014\ \}}
+\DoxyCodeLine{00015\ \textcolor{preprocessor}{\#endif}}
+\DoxyCodeLine{00016\ }
+\DoxyCodeLine{00017\ \textcolor{comment}{//\ Modulo\ (as\ opposed\ to\ remainder),\ per\ https://stackoverflow.com/a/19288271}}
+\DoxyCodeLine{00018\ \textcolor{keywordtype}{int}\ mod(\textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ dividend,\ \textcolor{keyword}{const}\ \textcolor{keywordtype}{int}\ divisor);}
+\DoxyCodeLine{00019\ }
+\DoxyCodeLine{00020\ \textcolor{keyword}{class\ }\doxymbox{\hyperlink{class_s_p_i__manager}{SPI\_manager}}\ \{}
+\DoxyCodeLine{00021\ \textcolor{keyword}{public}:}
+\DoxyCodeLine{00022\ \ \ \ \ \textcolor{keyword}{enum\ class}\ Owner\ \{}
+\DoxyCodeLine{00023\ \ \ \ \ \ \ \ \ NONE,}
+\DoxyCodeLine{00024\ \ \ \ \ \ \ \ \ ENCODER,}
+\DoxyCodeLine{00025\ \ \ \ \ \ \ \ \ MOTOR}
+\DoxyCodeLine{00026\ \ \ \ \ \};}
+\DoxyCodeLine{00027\ }
+\DoxyCodeLine{00028\ \ \ \ \ \textcolor{keywordtype}{bool}\ set\_owner(Owner\ owner)}
+\DoxyCodeLine{00029\ \ \ \ \ \{}
+\DoxyCodeLine{00030\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{if}\ (owner\_\ !=\ Owner::NONE)}
+\DoxyCodeLine{00031\ \ \ \ \ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{false};}
+\DoxyCodeLine{00032\ }
+\DoxyCodeLine{00033\ \ \ \ \ \ \ \ \ owner\_\ =\ owner;}
+\DoxyCodeLine{00034\ \ \ \ \ \ \ \ \ \textcolor{keywordflow}{return}\ \textcolor{keyword}{true};}
+\DoxyCodeLine{00035\ \ \ \ \ \}}
+\DoxyCodeLine{00036\ }
+\DoxyCodeLine{00037\ \ \ \ \ \textcolor{keywordtype}{void}\ release()\ \{owner\_\ =\ Owner::NONE;\}}
+\DoxyCodeLine{00038\ }
+\DoxyCodeLine{00039\ \ \ \ \ Owner\ get\_owner()\textcolor{keyword}{\ const\ }\{\textcolor{keywordflow}{return}\ owner\_;\}}
+\DoxyCodeLine{00040\ }
+\DoxyCodeLine{00041\ \ \ \ \ \textcolor{keywordtype}{bool}\ busy()\textcolor{keyword}{\ const\ \ \ }\{\textcolor{keywordflow}{return}\ owner\_\ !=\ Owner::NONE;\}}
+\DoxyCodeLine{00042\ }
+\DoxyCodeLine{00043\ \textcolor{keyword}{private}:}
+\DoxyCodeLine{00044\ \ \ \ \ Owner\ owner\_\ =\ Owner::NONE;}
+\DoxyCodeLine{00045\ \};}
+\DoxyCodeLine{00046\ \textcolor{preprocessor}{\#endif\ }\textcolor{comment}{/*\ UTILITIES\_HPP\ */}\textcolor{preprocessor}{}}
+
+\end{DoxyCode}

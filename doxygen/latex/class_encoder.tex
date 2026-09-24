@@ -1,0 +1,136 @@
+\doxysection{Encoder Class Reference}
+\hypertarget{class_encoder}{}\label{class_encoder}\index{Encoder@{Encoder}}
+\doxysubsubsection*{Classes}
+\begin{DoxyCompactItemize}
+\item 
+struct \doxymbox{\hyperlink{struct_encoder_1_1config__enc}{config\+\_\+enc}}
+\begin{DoxyCompactList}\small\item\em \doxylink{class_encoder}{Encoder} module configuration to FLASH. \end{DoxyCompactList}\item 
+struct \doxymbox{\hyperlink{struct_encoder_1_1_encoder___state}{Encoder\+\_\+\+State}}
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Types}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_encoder_a3522f42ecb6d669de1128b40d27e8806}\label{class_encoder_a3522f42ecb6d669de1128b40d27e8806} 
+enum \doxymbox{\hyperlink{class_encoder_a3522f42ecb6d669de1128b40d27e8806}{Encoder\+\_\+\+Error}} : uint32\+\_\+t \{ {\bfseries ERROR\+\_\+\+NONE} = 0
+, {\bfseries ERROR\+\_\+\+SPI\+\_\+\+PARITY} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 1
+, {\bfseries ERROR\+\_\+\+INVALID\+\_\+\+DIRECTION} = 1U \texorpdfstring{$<$}{<}\texorpdfstring{$<$}{<} 2
+ \}
+\begin{DoxyCompactList}\small\item\em Error classifications. \end{DoxyCompactList}\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Member Functions}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_encoder_a034f032c1ba36465c408977c5f169c30}\label{class_encoder_a034f032c1ba36465c408977c5f169c30} 
+bool {\bfseries init} ()
+\begin{DoxyCompactList}\small\item\em refresh encoder state that has the possibility to overflow \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_encoder_a43375612cc8b8ef91d89cfeade1a5da8}{set\+\_\+config}} (const \doxymbox{\hyperlink{struct_encoder_1_1config__enc}{config\+\_\+enc}} \&config\+\_\+load)
+\begin{DoxyCompactList}\small\item\em Apply loaded configuration from FLASH. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_encoder_a8a3a023e8711803bb96d1b121e6d4061}{update\+\_\+observer\+\_\+gain}} (float BW)
+\begin{DoxyCompactList}\small\item\em Update cfg observer gain and force it to be overdamped system. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_encoder_aad8920086fa5db993c9da5d62de5d9bb}{enc\+\_\+direction}} (int delta\+\_\+count)
+\begin{DoxyCompactList}\small\item\em encoder calibration sequence to update the positive and negative direction \end{DoxyCompactList}\item 
+\Hypertarget{class_encoder_a0595995a195ef2a28680c40c0cd58922}\label{class_encoder_a0595995a195ef2a28680c40c0cd58922} 
+void {\bfseries enc\+\_\+\+Update} ()
+\begin{DoxyCompactList}\small\item\em processed data and run the observer to update the encoder state \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_encoder_a87c1db718d227ef5fecf82df62915af2}{enc\+\_\+spi\+\_\+start}} ()
+\begin{DoxyCompactList}\small\item\em Initialize SPI Communications between MCU and encoder. \end{DoxyCompactList}\item 
+void \doxymbox{\hyperlink{class_encoder_a866ed3354f3ee5ca4a38a5bb242d5246}{enc\+\_\+spi\+\_\+finish}} ()
+\begin{DoxyCompactList}\small\item\em functions called on the SPI\+\_\+finish callback, used to validate the data and update raw state \end{DoxyCompactList}\item 
+\Hypertarget{class_encoder_ab151d01005321b5f0b870cff2427fe47}\label{class_encoder_ab151d01005321b5f0b870cff2427fe47} 
+const \doxymbox{\hyperlink{struct_encoder_1_1_encoder___state}{Encoder\+\_\+\+State}} \& {\bfseries get} () const
+\item 
+\Hypertarget{class_encoder_a0bc5c129d2b31358c1c12ab90fb410b9}\label{class_encoder_a0bc5c129d2b31358c1c12ab90fb410b9} 
+const \doxymbox{\hyperlink{struct_encoder_1_1config__enc}{config\+\_\+enc}} \& {\bfseries get\+\_\+config} () const
+\item 
+\Hypertarget{class_encoder_a54b7983e89b559f46e9b4680b50dac4f}\label{class_encoder_a54b7983e89b559f46e9b4680b50dac4f} 
+\doxymbox{\hyperlink{class_encoder_a3522f42ecb6d669de1128b40d27e8806}{Encoder\+\_\+\+Error}} {\bfseries get\+\_\+error} ()
+\end{DoxyCompactItemize}
+\doxysubsubsection*{Public Attributes}
+\begin{DoxyCompactItemize}
+\item 
+\Hypertarget{class_encoder_a9b6aba5ca0a6c38ea3f1974b50e32348}\label{class_encoder_a9b6aba5ca0a6c38ea3f1974b50e32348} 
+bool {\bfseries data\+\_\+ready}
+\begin{DoxyCompactList}\small\item\em \doxylink{class_encoder}{Encoder} SPI transmission. \end{DoxyCompactList}\item 
+\Hypertarget{class_encoder_a53ed06ee721f9e65f791262eed8759b0}\label{class_encoder_a53ed06ee721f9e65f791262eed8759b0} 
+uint8\+\_\+t {\bfseries SPI\+\_\+raw}
+\item 
+\Hypertarget{class_encoder_a8bce244b718daafd019a803df90aaec3}\label{class_encoder_a8bce244b718daafd019a803df90aaec3} 
+float {\bfseries frequency} = 20000.\+0f
+\begin{DoxyCompactList}\small\item\em Timer frequency timestep \+[BASED ON TIM4]. \end{DoxyCompactList}\item 
+\Hypertarget{class_encoder_ae5f3632f2f6854234fbda869344bc74a}\label{class_encoder_ae5f3632f2f6854234fbda869344bc74a} 
+float {\bfseries dt} = 1.\+0f/\+20000.\+0f
+\end{DoxyCompactItemize}
+
+
+\label{class_encoder_doc-func-members}
+\Hypertarget{class_encoder_doc-func-members}
+\doxysubsection{Member Function Documentation}
+\Hypertarget{class_encoder_aad8920086fa5db993c9da5d62de5d9bb}\index{Encoder@{Encoder}!enc\_direction@{enc\_direction}}
+\index{enc\_direction@{enc\_direction}!Encoder@{Encoder}}
+\doxysubsubsection{\texorpdfstring{enc\_direction()}{enc\_direction()}}
+{\footnotesize\ttfamily \label{class_encoder_aad8920086fa5db993c9da5d62de5d9bb} 
+bool Encoder::\+enc\+\_\+direction (\begin{DoxyParamCaption}\item[{int}]{delta\+\_\+count}{}\end{DoxyParamCaption})}
+
+
+
+encoder calibration sequence to update the positive and negative direction 
+
+
+\begin{DoxyParams}{Parameters}
+{\em delta\+\_\+count} & the changes in observed count after certain t\+\_\+settle \\
+\hline
+\end{DoxyParams}
+\Hypertarget{class_encoder_a866ed3354f3ee5ca4a38a5bb242d5246}\index{Encoder@{Encoder}!enc\_spi\_finish@{enc\_spi\_finish}}
+\index{enc\_spi\_finish@{enc\_spi\_finish}!Encoder@{Encoder}}
+\doxysubsubsection{\texorpdfstring{enc\_spi\_finish()}{enc\_spi\_finish()}}
+{\footnotesize\ttfamily \label{class_encoder_a866ed3354f3ee5ca4a38a5bb242d5246} 
+void Encoder::\+enc\+\_\+spi\+\_\+finish (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+functions called on the SPI\+\_\+finish callback, used to validate the data and update raw state 
+
+The parity check is based on EVEN parity \+[DATASHEET] \Hypertarget{class_encoder_a87c1db718d227ef5fecf82df62915af2}\index{Encoder@{Encoder}!enc\_spi\_start@{enc\_spi\_start}}
+\index{enc\_spi\_start@{enc\_spi\_start}!Encoder@{Encoder}}
+\doxysubsubsection{\texorpdfstring{enc\_spi\_start()}{enc\_spi\_start()}}
+{\footnotesize\ttfamily \label{class_encoder_a87c1db718d227ef5fecf82df62915af2} 
+void Encoder::\+enc\+\_\+spi\+\_\+start (\begin{DoxyParamCaption}{}{}\end{DoxyParamCaption})}
+
+
+
+Initialize SPI Communications between MCU and encoder. 
+
+pulldown the n\+CS to signal the desired SPI device and initiate transmit from the HAL library \Hypertarget{class_encoder_a43375612cc8b8ef91d89cfeade1a5da8}\index{Encoder@{Encoder}!set\_config@{set\_config}}
+\index{set\_config@{set\_config}!Encoder@{Encoder}}
+\doxysubsubsection{\texorpdfstring{set\_config()}{set\_config()}}
+{\footnotesize\ttfamily \label{class_encoder_a43375612cc8b8ef91d89cfeade1a5da8} 
+void Encoder::\+set\+\_\+config (\begin{DoxyParamCaption}\item[{const \doxymbox{\hyperlink{struct_encoder_1_1config__enc}{config\+\_\+enc}} \&}]{config\+\_\+load}{}\end{DoxyParamCaption})}
+
+
+
+Apply loaded configuration from FLASH. 
+
+Here is the call graph for this function:
+% FIG 0
+\Hypertarget{class_encoder_a8a3a023e8711803bb96d1b121e6d4061}\index{Encoder@{Encoder}!update\_observer\_gain@{update\_observer\_gain}}
+\index{update\_observer\_gain@{update\_observer\_gain}!Encoder@{Encoder}}
+\doxysubsubsection{\texorpdfstring{update\_observer\_gain()}{update\_observer\_gain()}}
+{\footnotesize\ttfamily \label{class_encoder_a8a3a023e8711803bb96d1b121e6d4061} 
+void Encoder::\+update\+\_\+observer\+\_\+gain (\begin{DoxyParamCaption}\item[{float}]{BW}{}\end{DoxyParamCaption})}
+
+
+
+Update cfg observer gain and force it to be overdamped system. 
+
+
+\begin{DoxyParams}{Parameters}
+{\em BW} & frequency \\
+\hline
+\end{DoxyParams}
+Here is the caller graph for this function:
+% FIG 1
+
+
+The documentation for this class was generated from the following files:\begin{DoxyCompactItemize}
+\item 
+Inc/encoder.\+hpp\item 
+Src/encoder.\+cpp\end{DoxyCompactItemize}

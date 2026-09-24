@@ -9,38 +9,38 @@ extern SPI_HandleTypeDef hspi1;
 class Encoder{
 
     public:
-        // Encoder module configuration to FLASH
+        /// Encoder module configuration to FLASH
         struct config_enc{
-            int cpr = 16384;                // Magnetic Encoder Resolution
-            int direction = 0;              // Direction of the encoder, relative to the motor
+            int cpr = 16384;                ///< Magnetic Encoder Resolution
+            int direction = 0;              ///< Direction of the encoder, relative to the motor
             
-            float observer_alpha = 0.0f;       // Observer Proportional gain
-            float observer_beta  = 0.0f;       // Observer Derivational gain
+            float observer_alpha = 0.0f;       ///< Observer Proportional gain
+            float observer_beta  = 0.0f;       ///< Observer Derivational gain
             float bandwidth      = 1.0f;
         };
 
         // Encoder module state
         struct Encoder_State{
-            uint32_t shadow_count;          // non-resetting true counter
-            int count_true;                 // True count from the encoder
-            int count_wrap;                 // Count with wraparound
-            float pos_estimate = 0.0f;      // Position estimate in counts
-            float vel_estimate = 0.0f;      // Velocity estimate in counts/s
-            float pos_cwrap = 0.0f;         // Position estimate in counts with 2pi wraparound
+            uint32_t shadow_count;          ///< non-resetting true counter
+            int count_true;                 ///< True count from the encoder
+            int count_wrap;                 ///< Count with wraparound
+            float pos_estimate = 0.0f;      ///< Position estimate in counts
+            float vel_estimate = 0.0f;      ///< Velocity estimate in counts/s
+            float pos_cwrap = 0.0f;         ///< Position estimate in counts with 2pi wraparound
         };
 
-        // Error classifications
+        /// Error classifications
         enum Encoder_Error : uint32_t{
             ERROR_NONE = 0,
             ERROR_SPI_PARITY = 1U << 1,
             ERROR_INVALID_DIRECTION = 1U << 2,
         };
 
-        // Encoder SPI transmission
+        /// Encoder SPI transmission
         bool data_ready;
         uint8_t SPI_raw;
 
-        // Timer frequency timestep [BASED ON TIM4]
+        /// Timer frequency timestep [BASED ON TIM4]
         float frequency = 20000.0f;
         float dt = 1.0f/20000.0f;
 
@@ -49,7 +49,7 @@ class Encoder{
         **/
         bool init();
 
-        // Apply loaded configuration from FLASH
+        /// Apply loaded configuration from FLASH
         void set_config(const config_enc& config_load);
 
         /** 
